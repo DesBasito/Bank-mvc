@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-create-card-applications-table
+      author: abu
+      changes:
+        - createTable:
+            tableName: card_applications
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(255)
+              - column:
+                  name: status
+                  type: varchar(55)
+                  defaultValue: 'PENDING'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: timestamp
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: card_applications
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_card_applications_user
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 09-create-card-applications-indexes
+      author: abu
+      changes:
+        - createIndex:
+            tableName: card_applications
+            indexName: idx_card_applications_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: card_applications
+            indexName: idx_card_applications_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: card_applications
+            indexName: idx_card_applications_created_at
+            columns:
+              - column:
+                  name: created_at

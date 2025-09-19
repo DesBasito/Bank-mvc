@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-create-card-block-requests-table
+      author: abu
+      changes:
+        - createTable:
+            tableName: card_block_requests
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(55)
+                  defaultValue: 'PENDING'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: admin_comment
+                  type: varchar(500)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: timestamp
+              - column:
+                  name: processed_by_admin_id
+                  type: bigint
+        - addForeignKeyConstraint:
+            baseTableName: card_block_requests
+            baseColumnNames: card_id
+            referencedTableName: cards
+            referencedColumnNames: id
+            constraintName: fk_card_block_requests_card
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: card_block_requests
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_card_block_requests_user
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: card_block_requests
+            baseColumnNames: processed_by_admin_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_card_block_requests_admin
+            onDelete: SET NULL
+
+  - changeSet:
+      id: 012-create-card-block-requests-indexes
+      author: abu
+      changes:
+        - createIndex:
+            tableName: card_block_requests
+            indexName: idx_card_block_requests_card_id
+            columns:
+              - column:
+                  name: card_id
+        - createIndex:
+            tableName: card_block_requests
+            indexName: idx_card_block_requests_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: card_block_requests
+            indexName: idx_card_block_requests_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: card_block_requests
+            indexName: idx_card_block_requests_created_at
+            columns:
+              - column:
+                  name: created_at
