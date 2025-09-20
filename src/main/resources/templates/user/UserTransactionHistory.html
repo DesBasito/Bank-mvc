@@ -155,10 +155,7 @@
                     <p class="text-muted">View and manage your transaction history</p>
                 </div>
                 <div class="btn-group" role="group">
-                    <button class="btn btn-gradient" onclick="exportTransactions()">
-                        <i class="fas fa-download me-2"></i>Export
-                    </button>
-                    <a href="user-transfer.html" class="btn btn-outline-primary">
+                    <a href="user-transfer.html" class="btn btn-gradient">
                         <i class="fas fa-plus me-2"></i>New Transfer
                     </a>
                 </div>
@@ -551,9 +548,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" onclick="downloadReceipt()">
-                    <i class="fas fa-download me-1"></i>Download Receipt
-                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -828,44 +822,6 @@
         for (let i = 1; i < items.length - 1; i++) {
             items[i].classList.toggle('active', i === currentPage);
         }
-    }
-
-    // Export transactions
-    function exportTransactions() {
-        console.log('Exporting transactions...');
-
-        // Create CSV content
-        const headers = ['Date', 'Type', 'From Card', 'To Card', 'Amount', 'Status', 'Transaction ID'];
-        const rows = [
-            ['2024-09-20', 'Outgoing', '•••• 1234', '•••• 5678', '-$250.00', 'COMPLETED', '#TXN-2024-0987'],
-            ['2024-09-20', 'Outgoing', '•••• 5678', '•••• 1234', '-$75.00', 'COMPLETED', '#TXN-2024-0986'],
-            ['2024-09-19', 'Incoming', '•••• 5678', '•••• 1234', '+$500.00', 'COMPLETED', '#TXN-2024-0985'],
-            // Add more rows as needed
-        ];
-
-        let csvContent = headers.join(',') + '\n';
-        rows.forEach(row => {
-            csvContent += row.map(field => `"${field}"`).join(',') + '\n';
-        });
-
-        // Create and download file
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-
-        alert('Transactions exported successfully!');
-    }
-
-    // Download receipt
-    function downloadReceipt() {
-        console.log('Downloading receipt...');
-        alert('Receipt download functionality would be implemented here');
     }
 
     // Logout function
