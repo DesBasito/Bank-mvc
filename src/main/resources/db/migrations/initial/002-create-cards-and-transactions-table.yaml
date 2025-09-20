@@ -1,0 +1,161 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-cards-table
+      author: abu
+      changes:
+        - createTable:
+            tableName: cards
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: owner_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiry_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(55)
+                  defaultValue: 'ACTIVE'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: decimal(19,2)
+                  defaultValue: 0.00
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: cards
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_cards_owner
+            onDelete: CASCADE
+        - createIndex:
+            tableName: cards
+            indexName: idx_cards_owner_id
+            columns:
+              - column:
+                  name: owner_id
+        - createIndex:
+            tableName: cards
+            indexName: idx_cards_status
+            columns:
+              - column:
+                  name: status
+  - changeSet:
+      id: 005-create-transactions-table
+      author: abu
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: from_card_id
+                  type: bigint
+              - column:
+                  name: to_card_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: decimal(19,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(500)
+              - column:
+                  name: status
+                  type: varchar(55)
+                  defaultValue: 'SUCCESS'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: timestamp
+              - column:
+                  name: error_message
+                  type: varchar(1000)
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: from_card_id
+            referencedTableName: cards
+            referencedColumnNames: id
+            constraintName: fk_transactions_from_card
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: to_card_id
+            referencedTableName: cards
+            referencedColumnNames: id
+            constraintName: fk_transactions_to_card
+            onDelete: CASCADE
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_from_card
+            columns:
+              - column:
+                  name: from_card_id
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_to_card
+            columns:
+              - column:
+                  name: to_card_id
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_created_at
+            columns:
+              - column:
+                  name: created_at
