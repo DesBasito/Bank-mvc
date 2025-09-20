@@ -1,0 +1,88 @@
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.user-profile {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.user-profile::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+.user-avatar {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(255,255,255,0.2);
+    border: 4px solid rgba(255,255,255,0.3);
+}
+.info-card {
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+.info-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.card-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+.card-item:hover {
+    border-left-color: #007bff;
+    background-color: #f8f9fa;
+}
+.stats-card {
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+}
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.status-badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+.card-visual {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border-radius: 12px;
+    color: white;
+    padding: 1.5rem;
+    min-height: 150px;
+    position: relative;
+    overflow: hidden;
+}
+.card-visual::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 60%;
+    height: 60%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+.card-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

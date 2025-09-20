@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - User Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/adminUserDetails.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar text-white p-3">
+            <h4 class="mb-4">
+                <i class="fas fa-university"></i> Bank Admin
+            </h4>
+            <nav class="nav flex-column">
+                <a class="nav-link text-white" href="/admin/cards"><i class="fas fa-credit-card me-2"></i>Cards</a>
+                <a class="nav-link text-white" href="/admin/applications"><i class="fas fa-file-alt me-2"></i>Applications</a>
+                <a class="nav-link text-white" href="/admin/transactions"><i class="fas fa-exchange-alt me-2"></i>Transactions</a>
+                <a class="nav-link text-white active" href="/admin/users"><i class="fas fa-users me-2"></i>Users</a>
+                <a class="nav-link text-white" href="/admin/reports"><i class="fas fa-chart-bar me-2"></i>Reports</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-user me-2"></i>User Details</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/admin/users">Users</a></li>
+                            <li class="breadcrumb-item active">Details</li>
+                        </ol>
+                    </nav>
+                </div>
+                <button class="btn btn-outline-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </button>
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="row mb-4">
+                <!-- User Profile Card -->
+                <div class="col-md-4">
+                    <div class="user-profile text-center position-relative">
+                        <div class="position-relative">
+                            <div class="user-avatar mx-auto mb-3" id="userAvatar">JD</div>
+                            <h4 id="userFullName">John William Doe</h4>
+                            <p class="mb-2" id="userRole">USER</p>
+                            <span class="badge status-badge bg-success" id="userStatus">ACTIVE</span>
+                            <div class="mt-3">
+                                <small class="opacity-75">Member since</small>
+                                <div id="memberSince">January 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Information -->
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card info-card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-info-circle text-primary me-2"></i>Personal Information
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">User ID</small>
+                                            <div class="fw-bold" id="userId">123</div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">Phone Number</small>
+                                            <div id="userPhone">+1 (555) 123-4567</div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">Email Address</small>
+                                            <div id="userEmail">john.doe@email.com</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Last Login</small>
+                                            <div id="lastLogin">2 hours ago</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Created</small>
+                                            <div id="createdDate">Jan 15, 2024</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card info-card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-bar text-success me-2"></i>Account Summary
+                                    </h5>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="fw-bold text-primary fs-4" id="totalCards">3</div>
+                                            <small class="text-muted">Total Cards</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="fw-bold text-success fs-4" id="totalBalance">$25,000</div>
+                                            <small class="text-muted">Total Balance</small>
+                                        </div>
+                                        <div class="col-6 mt-3">
+                                            <div class="fw-bold text-info fs-4" id="totalTransactions">156</div>
+                                            <small class="text-muted">Transactions</small>
+                                        </div>
+                                        <div class="col-6 mt-3">
+                                            <div class="fw-bold text-warning fs-4" id="avgTransaction">$159</div>
+                                            <small class="text-muted">Avg Amount</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs text-warning me-2"></i>User Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-group me-2" role="group">
+                                <button class="btn btn-outline-primary" onclick="editUser()">
+                                    <i class="fas fa-edit me-1"></i>Edit User
+                                </button>
+                                <button class="btn btn-outline-info" onclick="resetPassword()">
+                                    <i class="fas fa-key me-1"></i>Reset Password
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group">
+                                <button class="btn btn-outline-warning" onclick="toggleUserStatus()" id="toggleStatusBtn">
+                                    <i class="fas fa-user-lock me-1"></i>Block User
+                                </button>
+                                <button class="btn btn-outline-success" onclick="generateUserReport()">
+                                    <i class="fas fa-file-alt me-1"></i>Generate Report
+                                </button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-danger" onclick="deleteUser()" id="deleteUserBtn">
+                                    <i class="fas fa-trash me-1"></i>Delete User
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User's Cards -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-credit-card text-primary me-2"></i>User's Cards
+                            </h5>
+                            <span class="badge bg-info" id="cardsCount">3 cards</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="userCardsContainer">
+                                <!-- User's cards will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history text-info me-2"></i>Recent Transactions
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="recentTransactionsBody">
+                                    <!-- Recent transactions will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-sm btn-outline-primary" onclick="viewAllUserTransactions()">
+                                    View All Transactions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-alt text-warning me-2"></i>Applications & Requests
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="userApplicationsContainer">
+                                <!-- User's applications will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    let userData = {
+        id: 123,
+        firstName: "John",
+        lastName: "Doe",
+        middleName: "William",
+        phoneNumber: "+1(555)123-4567",
+        email: "john.doe@email.com",
+        enabled: true,
+        role: "USER",
+        createdAt: "2024-01-15T10:30:00Z",
+        updatedAt: "2024-09-20T14:30:00Z",
+        lastLogin: "2024-09-20T12:30:00Z"
+    };
+
+    let userCards = [
+        {
+            id: 1,
+            cardNumber: "4111111111111111",
+            type: "DEBIT",
+            status: "ACTIVE",
+            balance: 15000.50,
+            expiryDate: "2026-12-31"
+        },
+        {
+            id: 2,
+            cardNumber: "4222222222222222",
+            type: "CREDIT",
+            status: "ACTIVE",
+            balance: 5000.00,
+            expiryDate: "2027-06-30"
+        },
+        {
+            id: 3,
+            cardNumber: "4333333333333333",
+            type: "VIRTUAL",
+            status: "BLOCKED",
+            balance: 4500.25,
+            expiryDate: "2026-08-31"
+        }
+    ];
+
+    let recentTransactions = [
+        {
+            id: 1001,
+            date: "2024-09-20",
+            type: "Transfer",
+            amount: 500.00,
+            status: "SUCCESS"
+        },
+        {
+            id: 1002,
+            date: "2024-09-19",
+            type: "Deposit",
+            amount: 1200.00,
+            status: "SUCCESS"
+        },
+        {
+            id: 1003,
+            date: "2024-09-18",
+            type: "Purchase",
+            amount: -89.99,
+            status: "SUCCESS"
+        },
+        {
+            id: 1004,
+            date: "2024-09-17",
+            type: "Transfer",
+            amount: -300.00,
+            status: "PENDING"
+        },
+        {
+            id: 1005,
+            date: "2024-09-16",
+            type: "Withdrawal",
+            amount: -150.00,
+            status: "FAILED"
+        }
+    ];
+
+    let userApplications = [
+        {
+            id: 1,
+            type: "CARD_APPLICATION",
+            cardType: "CREDIT",
+            status: "APPROVED",
+            createdAt: "2024-09-15T10:00:00Z"
+        },
+        {
+            id: 2,
+            type: "BLOCK_REQUEST",
+            cardId: 3,
+            reason: "Lost card",
+            status: "PENDING",
+            createdAt: "2024-09-18T14:30:00Z"
+        }
+    ];
+
+    function getUserInitials(user) {
+        return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
+    }
+
+    function maskCardNumber(cardNumber) {
+        return cardNumber.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '**** **** **** $4');
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(Math.abs(amount));
+    }
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    function formatDateTime(dateString) {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function getTimeAgo(dateString) {
+        const now = new Date();
+        const date = new Date(dateString);
+        const diffMs = now - date;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffHours < 1) return 'Less than an hour ago';
+        if (diffHours < 24) return `${diffHours} hours ago`;
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return formatDate(dateString);
+    }
+
+    function getStatusBadgeClass(status) {
+        switch(status) {
+            case 'ACTIVE': return 'bg-success';
+            case 'BLOCKED': return 'bg-danger';
+            case 'EXPIRED': return 'bg-warning';
+            case 'SUCCESS': return 'bg-success';
+            case 'PENDING': return 'bg-warning';
+            case 'FAILED': return 'bg-danger';
+            case 'APPROVED': return 'bg-success';
+            case 'REJECTED': return 'bg-danger';
+            default: return 'bg-secondary';
+        }
+    }
+
+    function getCardTypeColor(type) {
+        switch(type) {
+            case 'DEBIT': return '#007bff';
+            case 'CREDIT': return '#28a745';
+            case 'VIRTUAL': return '#6f42c1';
+            case 'PREPAID': return '#ffc107';
+            default: return '#6c757d';
+        }
+    }
+
+    function loadUserDetails() {
+        // Update user profile section
+        document.getElementById('userAvatar').textContent = getUserInitials(userData);
+        document.getElementById('userFullName').textContent = `${userData.firstName} ${userData.middleName} ${userData.lastName}`;
+        document.getElementById('userRole').textContent = userData.role;
+        document.getElementById('userStatus').textContent = userData.enabled ? 'ACTIVE' : 'BLOCKED';
+        document.getElementById('userStatus').className = `badge status-badge ${userData.enabled ? 'bg-success' : 'bg-danger'}`;
+        document.getElementById('memberSince').textContent = formatDate(userData.createdAt);
+
+        // Update personal information
+        document.getElementById('userId').textContent = userData.id;
+        document.getElementById('userPhone').textContent = userData.phoneNumber;
+        document.getElementById('userEmail').textContent = userData.email;
+        document.getElementById('lastLogin').textContent = getTimeAgo(userData.lastLogin);
+        document.getElementById('createdDate').textContent = formatDate(userData.createdAt);
+
+        // Update account summary
+        const totalBalance = userCards.reduce((sum, card) => sum + card.balance, 0);
+        const totalTransactions = recentTransactions.length * 10; // Simulated total
+        const avgTransaction = totalTransactions > 0 ? totalBalance / (totalTransactions / 10) : 0;
+
+        document.getElementById('totalCards').textContent = userCards.length;
+        document.getElementById('totalBalance').textContent = formatCurrency(totalBalance);
+        document.getElementById('totalTransactions').textContent = totalTransactions;
+        document.getElementById('avgTransaction').textContent = formatCurrency(avgTransaction);
+
+        // Update action buttons
+        updateActionButtons();
+    }
+
+    function updateActionButtons() {
+        const toggleBtn = document.getElementById('toggleStatusBtn');
+        const deleteBtn = document.getElementById('deleteUserBtn');
+
+        if (userData.enabled) {
+            toggleBtn.innerHTML = '<i class="fas fa-user-lock me-1"></i>Block User';
+            toggleBtn.className = 'btn btn-outline-warning';
+        } else {
+            toggleBtn.innerHTML = '<i class="fas fa-user-check me-1"></i>Unblock User';
+            toggleBtn.className = 'btn btn-outline-success';
+        }
+
+        // Disable delete if user has cards with positive balance
+        const hasActiveBalance = userCards.some(card => card.balance > 0);
+        if (hasActiveBalance) {
+            deleteBtn.disabled = true;
+            deleteBtn.title = 'Cannot delete user with active card balances';
+        }
+    }
+
+    function loadUserCards() {
+        const container = document.getElementById('userCardsContainer');
+        document.getElementById('cardsCount').textContent = `${userCards.length} cards`;
+
+        container.innerHTML = userCards.map(card => `
+                <div class="col-md-4 mb-3">
+                    <div class="card-visual" style="background: linear-gradient(45deg, ${getCardTypeColor(card.type)}, ${getCardTypeColor(card.type)}dd)">
+                        <div class="position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-light text-dark">${card.type}</span>
+                                <span class="badge ${getStatusBadgeClass(card.status)}">${card.status}</span>
+                            </div>
+                            <div class="card-number mb-2">${maskCardNumber(card.cardNumber)}</div>
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div>
+                                    <small class="opacity-75">BALANCE</small>
+                                    <div class="fw-bold fs-5">${formatCurrency(card.balance)}</div>
+                                </div>
+                                <div class="text-end">
+                                    <small class="opacity-75">EXPIRES</small>
+                                    <div>${new Date(card.expiryDate).toLocaleDateString('en-US', {month: '2-digit', year: '2-digit'})}</div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-light" onclick="viewCardDetails(${card.id})">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function loadRecentTransactions() {
+        const tableBody = document.getElementById('recentTransactionsBody');
+        tableBody.innerHTML = recentTransactions.slice(0, 5).map(transaction => `
+                <tr>
+                    <td>${formatDate(transaction.date)}</td>
+                    <td>
+                        <i class="fas ${getTransactionIcon(transaction.type)} me-1"></i>
+                        ${transaction.type}
+                    </td>
+                    <td class="${transaction.amount >= 0 ? 'text-success' : 'text-danger'}">
+                        ${transaction.amount >= 0 ? '+' : ''}${formatCurrency(transaction.amount)}
+                    </td>
+                    <td>
+                        <span class="badge ${getStatusBadgeClass(transaction.status)}">${transaction.status}</span>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    function loadUserApplications() {
+        const container = document.getElementById('userApplicationsContainer');
+
+        if (userApplications.length === 0) {
+            container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <p>No recent applications or requests</p>
+                    </div>
+                `;
+            return;
+        }
+
+        container.innerHTML = userApplications.map(app => `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">
+                            ${app.type === 'CARD_APPLICATION' ? 'Card Application' : 'Block Request'}
+                        </div>
+                        <small class="text-muted">
+                            ${app.type === 'CARD_APPLICATION' ? app.cardType + ' Card' : 'Card ID: ' + app.cardId}
+                            | ${formatDate(app.createdAt)}
+                        </small>
+                    </div>
+                    <span class="badge ${getStatusBadgeClass(app.status)}">${app.status}</span>
+                </div>
+            `).join('');
+    }
+
+    function getTransactionIcon(type) {
+        switch(type.toLowerCase()) {
+            case 'transfer': return 'fa-exchange-alt';
+            case 'deposit': return 'fa-arrow-down';
+            case 'purchase': return 'fa-shopping-cart';
+            case 'withdrawal': return 'fa-arrow-up';
+            default: return 'fa-circle';
+        }
+    }
+
+    function viewCardDetails(cardId) {
+        window.location.href = `/admin/cards/${cardId}`;
+    }
+
+    function viewAllUserTransactions() {
+        window.location.href = `/admin/transactions?userId=${userData.id}`;
+    }
+
+    function editUser() {
+        alert('Edit user functionality would be implemented here');
+    }
+
+    function resetPassword() {
+        if (confirm('Are you sure you want to reset this user\'s password?')) {
+            showNotification('Password reset email sent to user', 'success');
+        }
+    }
+
+    function toggleUserStatus() {
+        const action = userData.enabled ? 'block' : 'unblock';
+        const actionText = userData.enabled ? 'block' : 'unblock';
+
+        if (confirm(`Are you sure you want to ${actionText} this user?`)) {
+            userData.enabled = !userData.enabled;
+            userData.updatedAt = new Date().toISOString();
+            loadUserDetails();
+            showNotification(`User ${actionText}ed successfully`, userData.enabled ? 'success' : 'warning');
+        }
+    }
+
+    function generateUserReport() {
+        alert('User report generation functionality would be implemented here');
+    }
+
+    function deleteUser() {
+        const hasActiveBalance = userCards.some(card => card.balance > 0);
+
+        if (hasActiveBalance) {
+            showNotification('Cannot delete user with active card balances', 'danger');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+            if (confirm('This will permanently delete the user and all associated data. Are you absolutely sure?')) {
+                alert('User deletion functionality would be implemented here');
+            }
+        }
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.top = '20px';
+        notification.style.right = '20px';
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '/logout';
+        }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUserDetails();
+        loadUserCards();
+        loadRecentTransactions();
+        loadUserApplications();
+    });
+</script>
+</body>
+</html>
