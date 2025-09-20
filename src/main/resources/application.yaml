@@ -1,7 +1,5 @@
 server:
-  port: ${SERVER_PORT}
-  servlet:
-    context-path: ${SERVER_CONTEXT_PATH}
+  port: 8080
 
 spring:
   application:
@@ -27,5 +25,5 @@ spring:
         default_schema: public
 
   liquibase:
-    change-log: classpath:db/migration/master.yaml
+    change-log: classpath:db/migrations/master.yaml
     enabled: true
