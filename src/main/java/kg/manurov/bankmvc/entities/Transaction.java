@@ -1,13 +1,14 @@
 package kg.manurov.bankmvc.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,47 +16,47 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "transactions")
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
     @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "from_card_id")
-    private Card fromCard;
+    @JoinColumn(name = "from_card_id", nullable = false)
+    Card fromCard;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "to_card_id", nullable = false)
-    private Card toCard;
+    Card toCard;
 
-    @NotNull
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    private BigDecimal amount;
+    BigDecimal amount;
 
-    @Size(max = 500)
     @Column(name = "description", length = 500)
-    private String description;
+    String description;
 
-    @Size(max = 55)
-    @NotNull
-    @ColumnDefault("'SUCCESS'")
-    @Column(name = "status", nullable = false, length = 55)
-    private String status;
+    @ColumnDefault("'PENDING'")
+    @Column(name = "status", nullable = false, length = 20)
+    String status;
 
-    @NotNull
     @ColumnDefault("now()")
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @CreatedDate
+    Instant createdAt;
 
     @Column(name = "processed_at")
-    private Instant processedAt;
+    @LastModifiedDate
+    Instant processedAt;
 
-    @Size(max = 1000)
     @Column(name = "error_message", length = 1000)
-    private String errorMessage;
+    String errorMessage;
 
 }
