@@ -1,43 +1,54 @@
 package kg.manurov.bankmvc.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "card_applications")
+@EntityListeners(AuditingEntityListener.class)
 public class CardApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(name = "type", nullable = false, length = 55)
-    private String type;
-
-    @Column(name = "comment")
-    private String comment;
-
-    @ColumnDefault("'PENDING'")
-    @Column(name = "status", nullable = false, length = 55)
-    private String status;
+    @CreatedBy
+    User user;
 
     @ColumnDefault("now()")
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @CreatedDate
+    Instant createdAt;
 
     @Column(name = "processed_at")
-    private Instant processedAt;
+    @LastModifiedDate
+    Instant processedAt;
 
+    @ColumnDefault("'PENDING'")
+    @Column(name = "status", columnDefinition = "card_application_status not null")
+    String status;
+
+    @Column(name = "type")
+    String cardType;
+
+    @Column(name = "comment", columnDefinition = "card_type not null")
+    String comment;
 }

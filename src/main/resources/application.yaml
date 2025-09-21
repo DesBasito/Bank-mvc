@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH}
 
 spring:
   application:
@@ -27,3 +29,9 @@ spring:
   liquibase:
     change-log: classpath:db/migrations/master.yaml
     enabled: true
+
+app:
+  encryption:
+    key: ${ENCRYPTION_KEY}
+  expiry_date: ${APP_EXPIRY_DATE}
+  rest_path: ${SERVER_CONTEXT_PATH}

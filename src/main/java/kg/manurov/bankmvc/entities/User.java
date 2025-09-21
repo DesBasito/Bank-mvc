@@ -1,65 +1,116 @@
 package kg.manurov.bankmvc.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
-public class User {
+@EntityListeners(AuditingEntityListener.class)
+public class User implements UserDetails {
     @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
+    String phoneNumber;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "password", nullable = false)
-    private String password;
+    String password;
 
-    @Size(max = 100)
-    @NotNull
     @Column(name = "first_name", nullable = false, length = 100)
-    private String firstName;
+    String firstName;
 
-    @Size(max = 100)
-    @NotNull
     @Column(name = "middle_name", nullable = false, length = 100)
-    private String middleName;
+    String middleName;
 
-    @Size(max = 100)
-    @NotNull
     @Column(name = "last_name", nullable = false, length = 100)
-    private String lastName;
+    String lastName;
 
-    @NotNull
     @ColumnDefault("true")
     @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
+    @Builder.Default
+    Boolean enabled = true;
 
-    @NotNull
     @ColumnDefault("now()")
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @CreatedDate
+    Instant createdAt;
 
     @ColumnDefault("now()")
     @Column(name = "updated_at")
-    private Instant updatedAt;
+    @LastModifiedDate
+    Instant updatedAt;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @BatchSize(size = 3)
+    @Builder.Default
+    Set<Card> cards = new LinkedHashSet<>();
 
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (role == null) {
+            throw new AccessDeniedException("У пользователя отсутствует роль в системе!");
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+    }
+
+    public String getFullName() {
+        return String.format("%s %s %s", lastName, firstName, middleName);
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.phoneNumber;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 }

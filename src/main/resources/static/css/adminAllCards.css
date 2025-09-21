@@ -2,53 +2,30 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
-.card-visual {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    color: white;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
+.card-item {
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
 }
-.card-visual::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
+.card-item:hover {
+    border-left-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+.search-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
 }
 .card-number {
     font-family: 'Courier New', monospace;
-    font-size: 1.4rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-.card-balance {
-    font-size: 2.5rem;
     font-weight: bold;
 }
-.status-badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-}
-.info-card {
-    border-left: 4px solid #007bff;
-    transition: all 0.3s ease;
-}
-.info-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.transaction-item {
-    border-left: 3px solid transparent;
-    transition: all 0.3s ease;
-}
-.transaction-item:hover {
-    border-left-color: #007bff;
-    background-color: #f8f9fa;
-}
-.chart-container {
-    height: 300px;
+.balance {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #28a745;
 }
