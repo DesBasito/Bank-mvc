@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@SecurityRequirement(name = "Basic Authentication")
 @RequestMapping("/card-applications")
 @RequiredArgsConstructor
 public class CardApplicationController {
@@ -41,8 +40,6 @@ public class CardApplicationController {
         return "user/userApplicationPage";
     }
 
-    @Operation(summary = "Get all applications (admin)",
-            description = "Receipt of all applications in the system (only for administrators)")
     @GetMapping("/admin/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<CardApplicationDto>> getAllApplications(

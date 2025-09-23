@@ -1,71 +1,76 @@
-<#import "../layout.ftlh" as main>
+<#-- Login page using new authentication layout -->
+<#include "../layouts/authLayout.ftlh">
 
-<@main.layout ; spring>
-    <div class="py-2">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-white text-black" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
-                        <form id="login" class="mt-md-4 pb-5" method="POST" action="/login">
+<@authLayout title="Sign In" subtitle="Welcome back! Please sign in to your account">
+    <form id="loginForm" method="POST" action="/login">
+        <!-- Email Field -->
+        <div class="form-floating">
+            <input type="tel"
+                   class="form-control"
+                   id="tel"
+                   name="username"
+                   placeholder="phone number"
+                   required
+                   autocomplete="tel"
+                   autofocus>
+            <label for="tel">
+                <i class="fas fa-envelope me-2"></i>Phone number
+            </label>
+        </div>
 
-                            <h2 class="fw-bold mb-2 text-uppercase"><@spring.message 'layout.login'/></h2>
-                            <p id="login-text" class="text-black-50 mb-5"><@spring.message 'login.enter'/></p>
+        <!-- Password Field -->
+        <div class="form-floating position-relative">
+            <input type="password"
+                   class="form-control"
+                   id="password"
+                   name="password"
+                   placeholder="Password"
+                   required
+                   autocomplete="current-password">
+            <label for="password">
+                <i class="fas fa-lock me-2"></i>Password
+            </label>
+            <span class="password-toggle" onclick="togglePassword('password')">
+                <i class="fas fa-eye"></i>
+            </span>
+        </div>
 
-                            <div class="form-outline form-black mb-4">
-                                <input type="email" id="email" class="form-control form-control-lg"
-                                       name="username"/>
-                                <label class="form-label" for="email"><@spring.message 'register.email'/></label>
-                            </div>
+        <!-- Remember Me -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="true" id="rememberMe" name="remember-me">
+            <label class="form-check-label" for="rememberMe">
+                Remember me on this device
+            </label>
+        </div>
 
-                            <div class="form-outline form-black mb-4">
-                                <input type="password" id="password" class="form-control form-control-lg"
-                                       name="password"/>
-                                <label class="form-label" for="password"><@spring.message 'register.userPassword' /></label>
-                            </div>
-                            <#if _csrf??>
-                                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
-                                       value="${(_csrf.token)!'csrf-token'}"/>
-                            </#if>
-                            <button id="submission" class="btn btn-outline-primary btn-lg px-5" type="submit">
-                                <@spring.message 'layout.login'/>
-                            </button>
+        <!-- Submit Button -->
+        <button class="btn btn-auth" type="submit">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Sign In
+        </button>
 
-                        </form>
-                        <div>
-                            <p class="mb-0"> <@spring.message 'login.noAccount'/> <a href="/register" class="text-primary-50
-                                text-decoration-none fw-bold"><@spring.message 'loginPage.register'/></a>
-                            </p>
-                        </div>
-                        <div>
-                             <a href="/forgot_password" class="text-primary-50
-                                text-decoration-none fw-bold"><@spring.message 'login.forgot.password'/></a>
-                        </div>
-
-                    </div>
+        <!-- Links -->
+        <div class="auth-links">
+            <div class="row">
+                <div class="col-6 text-start">
+                    <a href="/auth/forgot_password">
+                        <i class="fas fa-key me-1"></i>Forgot Password?
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="/auth/register">
+                        <i class="fas fa-user-plus me-1"></i>Create Account
+                    </a>
                 </div>
             </div>
         </div>
+    </form>
+
+    <!-- Additional Information -->
+    <div class="mt-4 text-center">
+        <small class="text-muted">
+            <i class="fas fa-shield-alt me-1"></i>
+            Your connection is secured with 256-bit SSL encryption
+        </small>
     </div>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
-            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-    <script>
-        let params = new URLSearchParams(window.location.search);
-        if (params.has("error")) {
-            window.onload = () => {
-                let msg = $('#login-text')
-
-                $(msg).text('Неверный email или пароль...')
-                $(msg).addClass('text-danger');
-                $(msg).removeClass('text-black-50');
-            }
-        }
-
-        const checkUser = document.getElementById('submission')
-        checkUser.addEventListener('click', () => {
-            const userEmail = document.querySelector('[name = "username"]').value;
-                localStorage.setItem('user', userEmail)
-        })
-    </script>
-</@main.layout>
+</@authLayout>

@@ -18,7 +18,7 @@ public class SwagConfig {
     @Value("${server.port:8080}")
     private String serverPort;
 
-    @Value("${server.servlet.context-path}")
+    @Value("${app.rest_path}")
     private String contextPath;
 
     @Bean

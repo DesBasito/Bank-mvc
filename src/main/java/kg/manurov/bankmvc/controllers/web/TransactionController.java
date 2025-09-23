@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 @Controller
 @RequestMapping("/transactions")
-@SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;

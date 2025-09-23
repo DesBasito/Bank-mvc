@@ -12,10 +12,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,20 +27,20 @@ import java.util.List;
 @SecurityRequirement(name = "Basic Authentication")
 @Tag(name = "Карты", description = "Операции управления банковскими картами")
 @Slf4j
-public class CardController {
+public class RestCardController {
     private final AuthenticatedUserUtil userUtil;
     private final CardService cardService;
 
 
-    @Operation(summary = "Отклонить заявку (админ)",
-            description = "Отклонение заявки администратором")
-    @PostMapping("/{id}/unblock")
+    @Operation(summary = "Изменение статуса карты (админ)",
+            description = "Изменение статуса карты администратором")
+    @PostMapping("/{id}/toggle")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CardDto> unblockCard(
-            @Parameter(description = "ID карты") @PathVariable Long id) {
-        log.info("Администратор разблокирует карту с ID: {}", id);
-        CardDto application = cardService.unblockCard(id);
-        return ResponseEntity.ok(application);
+    public ResponseEntity<HttpStatus> toggleCard(
+            @Parameter(description = "card ID") @PathVariable Long id) {
+        log.info("Администратор меняет статус карты с ID: {}", id);
+        cardService.toggleCard(id);
+        return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
     @Operation(summary = "Получить активные карты пользователя",

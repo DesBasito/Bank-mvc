@@ -25,6 +25,16 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix(restPath,
-                c -> c.isAnnotationPresent(RestController.class));
+                c -> c.isAnnotationPresent(RestController.class)
+                     && !isSwaggerController(c));
+    }
+
+    private boolean isSwaggerController(Class<?> controllerClass) {
+        String packageName = controllerClass.getPackage().getName();
+
+        return packageName.startsWith("org.springdoc")
+               || packageName.startsWith("org.springframework.boot.actuate")
+               || controllerClass.getSimpleName().contains("OpenApi")
+               || controllerClass.getSimpleName().contains("ApiDocs");
     }
 }

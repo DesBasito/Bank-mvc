@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
 @Tag(name = "Запросы на блокировку карт", description = "Управление запросами на блокировку банковских карт")
-public class CardBlockRequestController {
+public class RestCardBlockRequestController {
     private final CardBlockRequestService cardBlockRequestService;
     private final AuthenticatedUserUtil userUtil;
 

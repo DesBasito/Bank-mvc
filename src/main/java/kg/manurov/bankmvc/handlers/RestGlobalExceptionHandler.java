@@ -1,4 +1,4 @@
-package kg.manurov.bankmvc.exceptions.handler;
+package kg.manurov.bankmvc.handlers;
 
 import kg.manurov.bankmvc.exceptions.ErrorResponseBody;
 import kg.manurov.bankmvc.service.ErrorService;

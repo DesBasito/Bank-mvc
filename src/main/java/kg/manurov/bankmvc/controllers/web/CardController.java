@@ -23,26 +23,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+@Slf4j
 @Controller
 @RequestMapping("/cards")
-@SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
-@Tag(name = "Карты", description = "Операции управления банковскими картами")
-@Slf4j
 public class CardController {
     private final AuthenticatedUserUtil userUtil;
     private final CardService cardService;
 
-    @Operation(summary = "Получить все карты пользователя",
-            description = "Получение списка карт текущего пользователя с пагинацией")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Список карт получен",
-                    content = @Content(schema = @Schema(implementation = Page.class)))
-    })
-    @GetMapping("/my")
     @PreAuthorize("hasRole('USER')")
     public String getMyCards(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
@@ -53,39 +43,27 @@ public class CardController {
         return "user/profile";
     }
 
-    @Operation(summary = "Получить все карты",
-            description = "Получение списка карт с пагинацией")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Список карт получен",
-                    content = @Content(schema = @Schema(implementation = Page.class)))
-    })
-    @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String getAllCards(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-            Pageable pageable, Model model) {
 
-        Page<CardDto> cards = cardService.getAllCards(pageable);
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String getAllCards(
+            @RequestParam(required = false, name = "balanceFrom") String balanceFrom,
+            @RequestParam(required = false, name = "balanceTo") String balanceTo,
+            @RequestParam(required = false, name = "status") String status,
+            @RequestParam(required = false, defaultValue = "createdAt") String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            Model model
+            ) {
+
+        Page<CardDto> cards = cardService.getAllCards(balanceTo, balanceFrom, status, sort, page);
         model.addAttribute("cards", cards);
+        model.addAttribute("balanceTo", balanceTo);
+        model.addAttribute("balanceFrom", balanceFrom);
+        model.addAttribute("status", status);
+        model.addAttribute("sort", sort);
         return "admin/adminAllCards";
     }
 
-    @Operation(summary = "Получить карту по ID",
-            description = "Получение подробной информации о карте")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Информация о карте получена",
-                    content = @Content(schema = @Schema(implementation = CardDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Карта не найдена"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "403",
-                    description = "Нет доступа к карте")
-    })
     @GetMapping("/{id}")
     @PreAuthorize("@authenticatedUserUtil.isCardOwner(#id, authentication.name) or hasRole('ADMIN')")
     public String getCard(

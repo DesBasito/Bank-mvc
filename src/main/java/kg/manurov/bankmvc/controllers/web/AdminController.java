@@ -27,12 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-@Tag(name = "Управление пользователями", description = "Административные операции с пользователями")
 public class AdminController {
     private final UserService userService;
 
-    @Operation(summary = "Админская страница всех пользователей",
-            description = "Получение списка всех пользователей с пагинацией")
     @GetMapping
     public String getAllUsers(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
@@ -43,17 +40,6 @@ public class AdminController {
         return "admin/adminUsersList";
     }
 
-    @Operation(summary = "Получить страницу пользователя по ID",
-            description = "Получение подробной информации о пользователе")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Информация о пользователе получена",
-                    content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Пользователь не найден")
-    })
     @GetMapping("/{id}")
     public String getUser(
             @Parameter(description = "ID пользователя") @PathVariable Long id, Model model) {

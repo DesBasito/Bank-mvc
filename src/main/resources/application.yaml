@@ -1,11 +1,11 @@
 server:
   port: ${SERVER_PORT}
-  servlet:
-    context-path: ${SERVER_CONTEXT_PATH}
 
 spring:
   application:
     name: bank-cards
+  freemarker:
+    expose-session-attributes: true
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -35,3 +35,4 @@ app:
     key: ${ENCRYPTION_KEY}
   expiry_date: ${APP_EXPIRY_DATE}
   rest_path: ${SERVER_CONTEXT_PATH}
+  page_size: 10

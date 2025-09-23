@@ -1,4 +1,4 @@
-package kg.manurov.bankmvc.exceptions.handler;
+package kg.manurov.bankmvc.handlers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

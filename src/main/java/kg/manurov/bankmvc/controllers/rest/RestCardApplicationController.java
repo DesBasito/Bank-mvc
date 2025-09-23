@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
 @Tag(name = "Заявки на карты", description = "Управление заявками на создание карт")
-public class CardApplicationController {
+public class RestCardApplicationController {
     private final CardApplicationService cardApplicationService;
     private final AuthenticatedUserUtil userUtil;
 
@@ -56,18 +56,18 @@ public class CardApplicationController {
         return ResponseEntity.ok(application);
     }
 
-    @Operation(summary = "Получить мои заявки",
-            description = "Получение списка заявок текущего пользователя")
-    @GetMapping("/my")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Page<CardApplicationDto>> getMyApplications(
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable) {
-
-        Long userId = userUtil.getCurrentUserId();
-        Page<CardApplicationDto> applications = cardApplicationService.getUserApplications(userId, pageable);
-        return ResponseEntity.ok(applications);
-    }
+//    @Operation(summary = "Получить мои заявки",
+//            description = "Получение списка заявок текущего пользователя")
+//    @GetMapping("/my")
+//    @PreAuthorize("hasRole('USER')")
+//    public ResponseEntity<Page<CardApplicationDto>> getMyApplications(
+//            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+//            Pageable pageable) {
+//
+//        Long userId = userUtil.getCurrentUserId();
+//        Page<CardApplicationDto> applications = cardApplicationService.getUserApplications(userId, pageable);
+//        return ResponseEntity.ok(applications);
+//    }
 
     @Operation(summary = "Отменить заявку",
             description = "Отмена заявки пользователем (только в статусе PENDING)")

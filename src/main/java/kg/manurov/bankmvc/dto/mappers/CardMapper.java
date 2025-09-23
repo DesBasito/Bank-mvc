@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Slf4j
 @Component
@@ -20,6 +21,7 @@ public class CardMapper {
     private Integer expiryDate;
     
     public CardDto toDto(Card card) {
+        ZoneId zoneId = ZoneId.systemDefault();
         CardDto dto = new CardDto();
         dto.setId(card.getId());
         dto.setCardNumber(card.getCardNumber());
@@ -33,8 +35,8 @@ public class CardMapper {
         dto.setStatus(card.getStatus());
         dto.setType( card.getType());
         dto.setBalance(card.getBalance());
-        dto.setCreatedAt(card.getCreatedAt());
-        dto.setUpdatedAt(card.getUpdatedAt());
+        dto.setCreatedAt(LocalDate.ofInstant(card.getCreatedAt(), zoneId));
+        dto.setUpdatedAt(LocalDate.ofInstant(card.getUpdatedAt(), zoneId));
 
         return dto;
     }

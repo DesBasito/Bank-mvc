@@ -43,7 +43,7 @@ public class CardDto {
     BigDecimal balance;
     @NotNull
     @Schema()
-    Instant createdAt;
+    LocalDate createdAt;
     @Schema()
-    Instant updatedAt;
+    LocalDate updatedAt;
 }

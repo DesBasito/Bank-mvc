@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
 @Tag(name = "Транзакции", description = "Операции с переводами между картами")
-public class TransactionController {
+public class RestTransactionController {
 
     private final TransactionService transactionService;
     private final AuthenticatedUserUtil userUtil;
