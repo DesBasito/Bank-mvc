@@ -19,7 +19,8 @@ public class OpenApiFileGenerator implements CommandLineRunner {
 
     @Value("${server.port}")
     private String port;
-    @Value("${app.rest_path}")
+
+    @Value("${server.servlet.context-path:}")
     private String contextPath;
 
     @Override
@@ -30,9 +31,17 @@ public class OpenApiFileGenerator implements CommandLineRunner {
     private void generateOpenApiFile() {
         try {
             Thread.sleep(3000);
-            String openApiUrl = String.format("http://localhost:%s%s/v3/api-docs", this.port, this.contextPath);
+
+            String baseUrl = String.format("http://localhost:%s", this.port);
+
+            if (contextPath != null && !contextPath.isEmpty() && !contextPath.equals("/")) {
+                baseUrl += contextPath;
+            }
+
+            String openApiUrl = baseUrl + "/v3/api-docs";
 
             log.info("🔄 Generation of OpenAPI specification...");
+            log.info("📡 Attempting to fetch from: {}", openApiUrl);
 
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().forEach(converter ->
@@ -48,21 +57,28 @@ public class OpenApiFileGenerator implements CommandLineRunner {
                 Files.createDirectories(Paths.get("docs"));
                 yamlMapper.writeValue(new File("docs/openapi.yaml"), jsonObject);
 
-                log.info("✅ Openapi specification is generated: docs/openapi.yaml");
+                log.info("✅ OpenAPI specification generated successfully: docs/openapi.yaml");
             } else {
-                log.warn("⚠️ OpenApi specification is empty or inaccessible");
+                log.warn("⚠️ OpenAPI specification is empty or inaccessible");
                 logManualInstructions();
             }
 
         } catch (Exception e) {
-            log.error("❌ Failed to automatically generate Openapi file: {}", e.getMessage());
+            log.error("❌ Failed to automatically generate OpenAPI file: {}", e.getMessage());
             logManualInstructions();
         }
     }
 
     private void logManualInstructions() {
-        log.info("💡 Get the specification manually:");
-        log.info("   curl -o docs/openapi.yaml http://localhost:{}{}/v3/api-docs.yaml", this.port, this.contextPath);
-        log.info("   or open: http://localhost:{}{}/swagger-ui/index.html", this.port, this.contextPath);
+        String baseUrl = String.format("http://localhost:%s", this.port);
+        if (contextPath != null && !contextPath.isEmpty() && !contextPath.equals("/")) {
+            baseUrl += contextPath;
+        }
+
+        log.info("💡 Manual access instructions:");
+        log.info("   📊 Swagger UI: {}/swagger-ui/index.html", baseUrl);
+        log.info("   📋 OpenAPI JSON: {}/v3/api-docs", baseUrl);
+        log.info("   📄 OpenAPI YAML: {}/v3/api-docs.yaml", baseUrl);
+        log.info("   💾 Download: curl -o docs/openapi.yaml {}/v3/api-docs.yaml", baseUrl);
     }
 }

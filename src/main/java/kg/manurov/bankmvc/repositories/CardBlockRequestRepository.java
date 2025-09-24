@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CardBlockRequestRepository extends JpaRepository<CardBlockRequest, Long> {
 
@@ -15,7 +17,5 @@ public interface CardBlockRequestRepository extends JpaRepository<CardBlockReque
 
     Page<CardBlockRequest> findByStatus(String status, Pageable pageable);
 
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM CardBlockRequest r " +
-           "WHERE r.card.id = :cardId AND r.status = 'PENDING'")
-    boolean existsPendingRequestForCard(@Param("cardId") Long cardId);
+    List<CardBlockRequest> findByCardIdAndStatus(Long id, String name);
 }

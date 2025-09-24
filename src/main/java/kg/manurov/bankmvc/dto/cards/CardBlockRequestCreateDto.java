@@ -14,16 +14,17 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на создание заявки блокировки карты")
+@Schema(description = "Card block request creation")
 public class CardBlockRequestCreateDto {
 
-    @Schema(description = "ID карты для блокировки", example = "1")
-    @NotNull(message = "ID карты обязательно")
-@ValidBlockRequest
+    @Schema(description = "Card ID to block", example = "1")
+    @NotNull(message = "Card ID is required")
+    @ValidBlockRequest
     Long cardId;
 
-    @Schema(description = "Причина блокировки", example = "Потеря карты")
-    @NotBlank(message = "Причина блокировки обязательна")
-    @Size(max = 500, message = "Причина не может превышать 500 символов")
+    @Schema(description = "Block reason", example = "LOST",
+            allowableValues = {"LOST", "STOLEN", "COMPROMISED", "SUSPICIOUS", "OTHER"})
+    @NotBlank(message = "Block reason is required")
+    @Size(max = 50, message = "Reason cannot exceed 50 characters")
     String reason;
 }

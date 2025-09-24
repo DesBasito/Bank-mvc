@@ -7,12 +7,17 @@ import kg.manurov.bankmvc.entities.User;
 import kg.manurov.bankmvc.enums.CardStatus;
 import kg.manurov.bankmvc.repositories.CardRepository;
 import kg.manurov.bankmvc.repositories.UserRepository;
+import kg.manurov.bankmvc.service.specifications.CardSpecification;
 import kg.manurov.bankmvc.util.EncryptionUtil;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +33,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional
 public class CardService {
+    @Value("${app.page_size}")
+    private Integer size;
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final EncryptionUtil encryptionUtil;
@@ -68,9 +75,11 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CardDto> getUserCards(Long userId, Pageable pageable) {
-        return cardRepository.findByOwnerId(userId, pageable)
-                .map(cardMapper::toDto);
+    public List<CardDto> getUserCards(Long userId) {
+        return cardRepository.findByOwnerId(userId)
+                .stream()
+                .map(cardMapper::toDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -82,14 +91,13 @@ public class CardService {
     }
 
 
-
     public void blockCard(Long cardId, String reason) {
         log.info("Блокировка карты с ID: {}, причина: {}", cardId, reason);
 
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException(CARD_NOT_FOUND));
 
-        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.getDescription())) {
+        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
             throw new ValidationException("Карта уже заблокирована");
         }
 
@@ -99,26 +107,23 @@ public class CardService {
         log.info("Карта {} заблокирована", card);
     }
 
-    public CardDto unblockCard(Long cardId) {
-        log.info("Разблокировка карты с ID: {}", cardId);
+    public void toggleCard(Long cardId) {
+        log.info("Блокировка карты с ID: {}", cardId);
 
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException(CARD_NOT_FOUND));
 
-        if (!Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
-            throw new ValidationException("Карта не заблокирована");
+        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
+            card.setStatus(CardStatus.ACTIVE.name());
+        } else if (Objects.equals(card.getStatus(), CardStatus.ACTIVE.name())) {
+            card.setStatus(CardStatus.BLOCKED.name());
+        } else {
+            throw new ValidationException("Cannot change status of expired card!");
         }
 
-        if (card.getExpiryDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Нельзя разблокировать истекшую карту");
-        }
+        cardRepository.save(card);
 
-        card.setStatus(CardStatus.ACTIVE.name());
-        Card updatedCard = cardRepository.save(card);
-
-        log.info("Карта {} разблокирована", card);
-
-        return cardMapper.toDto(updatedCard);
+        log.info("Карта {} заблокирована", card);
     }
 
     public void addBalance(Long cardId, BigDecimal amount) {
@@ -177,7 +182,13 @@ public class CardService {
     }
 
 
-    public Page<CardDto> getAllCards(Pageable pageable) {
-        return cardRepository.findAll(pageable).map(cardMapper::toDto);
+    public Page<CardDto> getAllCards(String balanceTo, String balanceFrom, String status, String sort, int page) {
+        BigDecimal from = null;
+        BigDecimal to = null;
+        if (balanceFrom != null && !balanceFrom.isBlank()) from = BigDecimal.valueOf(Double.parseDouble(balanceFrom));
+        if (balanceTo != null && !balanceTo.isBlank()) to = BigDecimal.valueOf(Double.parseDouble(balanceTo));
+        Specification<Card> cardSpecification = CardSpecification.createSpecification(status,from, to);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return cardRepository.findAll(cardSpecification,pageable).map(cardMapper::toDto);
     }
 }

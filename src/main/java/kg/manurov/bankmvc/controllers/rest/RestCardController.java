@@ -1,5 +1,6 @@
 package kg.manurov.bankmvc.controllers.rest;
 
+import kg.manurov.bankmvc.dto.ApiResponse;
 import kg.manurov.bankmvc.dto.cards.CardDto;
 import kg.manurov.bankmvc.service.CardService;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
@@ -12,41 +13,40 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cards")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Basic Authentication")
-@Tag(name = "Карты", description = "Операции управления банковскими картами")
+@Tag(name = "Cards", description = "Bank card management operations")
 @Slf4j
-public class CardController {
+public class RestCardController {
     private final AuthenticatedUserUtil userUtil;
     private final CardService cardService;
 
 
-    @Operation(summary = "Отклонить заявку (админ)",
-            description = "Отклонение заявки администратором")
-    @PostMapping("/{id}/unblock")
+    @Operation(summary = "Change card status (admin)",
+            description = "Change card status by administrator")
+    @PutMapping("/{id}/toggle")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CardDto> unblockCard(
-            @Parameter(description = "ID карты") @PathVariable Long id) {
-        log.info("Администратор разблокирует карту с ID: {}", id);
-        CardDto application = cardService.unblockCard(id);
-        return ResponseEntity.ok(application);
+    public ResponseEntity<ApiResponse<Void>> toggleCard(
+            @Parameter(description = "card ID") @PathVariable Long id) {
+        log.info("Administrator changes card status with ID: {}", id);
+        cardService.toggleCard(id);
+        return ResponseEntity.ok(ApiResponse.success("Card status changed successfully!"));
     }
 
-    @Operation(summary = "Получить активные карты пользователя",
-            description = "Получение списка активных карт текущего пользователя")
+    @Operation(summary = "Get user's active cards",
+            description = "Get list of active cards for current user")
     @GetMapping("/my/active")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<CardDto>> getMyActiveCards() {
@@ -55,23 +55,23 @@ public class CardController {
         return ResponseEntity.ok(cards);
     }
 
-    @Operation(summary = "Получить карту по номеру",
-            description = "Получение подробной информации о карте по его номеру")
+    @Operation(summary = "Get card by number",
+            description = "Get detailed card information by its number")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Информация о карте получена",
+                    description = "Card information retrieved",
                     content = @Content(schema = @Schema(implementation = CardDto.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "404",
-                    description = "Карта не найдена"),
+                    description = "Card not found"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "403",
-                    description = "Нет доступа к карте")
+                    description = "No access to card")
     })
     @GetMapping()
     public ResponseEntity<CardDto> getCardByNumber(
-            @Parameter(description = "Номер карты") @RequestParam String number) {
+            @Parameter(description = "Card number") @RequestParam String number) {
         CardDto card = cardService.getCardByNumber(number);
         return ResponseEntity.ok(card);
     }

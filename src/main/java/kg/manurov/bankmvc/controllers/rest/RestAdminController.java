@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "Basic Authentication")
 @PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Управление пользователями", description = "Административные операции с пользователями")
-public class AdminController {
+public class RestAdminController {
     private final UserService userService;
 
 

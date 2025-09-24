@@ -1,5 +1,5 @@
-<#import "spring.ftl" as spring>
-<#macro layout>
+<#macro adminLayout>
+<#import "/spring.ftl" as spring>
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,11 +24,11 @@
                 <i class="fas fa-university"></i> Bank Admin
             </h4>
             <nav class="nav flex-column">
-                <a class="nav-link text-white <?active?>" href="#"><i class="fas fa-credit-card me-2"></i>Cards</a>
-                <a class="nav-link text-white <?active?>" href="#"><i class="fas fa-file-alt me-2"></i>Applications</a>
-                <a class="nav-link text-white <?active?>" href="#"><i class="fas fa-exchange-alt me-2"></i>Transactions</a>
-                <a class="nav-link text-white <?active?>" href="#"><i class="fas fa-users me-2"></i>Users</a>
-                <a class="nav-link text-white <?active?>" href="#"><i class="fas fa-chart-bar me-2"></i>Reports</a>
+                <a class="nav-link text-white <?active?>" href="/cards/all"><i class="fas fa-credit-card me-2"></i>Cards</a>
+                <a class="nav-link text-white <?active?>" href="/card-applications/admin/all"><i class="fas fa-file-alt me-2"></i>Applications</a>
+                <a class="nav-link text-white <?active?>" href="/transactions/all"><i class="fas fa-exchange-alt me-2"></i>Transactions</a>
+                <a class="nav-link text-white <?active?>" href="/users"><i class="fas fa-users me-2"></i>Users</a>
+                <a class="nav-link text-white <?active?>" href="/card-block-requests/admin/all"><i class="fas fa-chart-bar me-2"></i>Reports</a>
             </nav>
         </div>
 

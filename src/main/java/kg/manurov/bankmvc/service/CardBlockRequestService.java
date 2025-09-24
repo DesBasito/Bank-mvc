@@ -27,14 +27,13 @@ public class CardBlockRequestService {
     private final CardBlockRequestRepository cardBlockRequestRepository;
     private final CardBlockRequestMapper mapper;
     private final CardRepository cardRepository;
-    private final UserRepository userRepository;
     private final CardService cardService;
 
-    public CardBlockRequestDto createBlockRequest(Long userId, CardBlockRequestCreateDto request) {
+    public CardBlockRequestDto createBlockRequest(CardBlockRequestCreateDto request) {
         log.info("Создание запроса на блокировку карты с ID: {}",
                 request.getCardId());
 
-        Card card = cardRepository.findById(userId)
+        Card card = cardRepository.findById(request.getCardId())
                 .orElseThrow(() -> new NoSuchElementException("Пользователь не найден"));
         CardBlockRequest blockRequest = mapper.toEntity(card,request);
         CardBlockRequest savedRequest = cardBlockRequestRepository.save(blockRequest);

@@ -6,17 +6,15 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Getter
+
 @AllArgsConstructor
 public enum RoleType implements EnumInterface{
-    ADMIN("Админ",2L), USER("Простой смертный 💩", 1L);
-
-    private final String description;
+    ADMIN(2L), USER( 1L);
     private final Long id;
 
     public static RoleType getById(Long id) {
         return Arrays.stream(RoleType.values())
-                .filter(roleType -> Objects.equals(roleType.getId(), id))
+                .filter(roleType -> Objects.equals(roleType.id, id))
                 .findFirst()
                 .orElse(null);
     }

@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>kg.manurov</groupId>
-    <artifactId>bank-mvc</artifactId>
+    <artifactId>bankmvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>bank-mvc</name>
+    <name>bankmvc</name>
     <description>Bank cards management system with MVC</description>
 
     <properties>
@@ -96,6 +96,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 

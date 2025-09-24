@@ -1,67 +1,91 @@
-<#import "../layout.ftlh" as register>
-<@register.layout ; spring>
-    <main>
-        <#if _csrf??>
-            <form action="/register" method="post">
-                <fieldset>
-                    <p>Registration</p>
-                    <div class="form-element">
-                        <div class="row gx-5 gy-3">
-                            <div class="col-6">
-                                <label for="userName" class="form-label"><@spring.message 'register.userName'/></label>
-                                <@spring.formInput "userCreationDto.name" 'class="form-control" id="userName" placeholder="First name"aria-label="First name"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+<#-- Register page using new authentication layout -->
+<#include "../layouts/authLayout.ftlh">
+<@authLayout title="Create Account" subtitle="Join us today! Create your secure banking account" ; spring>
+    <form id="registerForm" method="POST" action="/auth/register">
+        <!-- First Name -->
+        <div class="my-5">
+            <label for="firstName" id="userName">
+                <i class="fas fa-user me-2"></i>First Name
+            </label>
+            <@spring.formInput "signUpRequest.name" 'class="form-control" id="userName" placeholder="First name" aria-label="First name"'/>
+            <@spring.showErrors "<br>" "error text-danger"/>
+        </div>
 
-                            </div>
-                            <div class="col-6">
-                                <label for="surname" class="form-label"><@spring.message 'register.surname'/></label>
-                                <@spring.formInput "userCreationDto.surname" 'class="form-control" id="surname" placeholder="Surname" aria-label="surname"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+        <!-- Last Name -->
+        <div class="my-5">
+            <label for="lastName">
+                <i class="fas fa-user me-2"></i>Last Name
+            </label>
+            <@spring.formInput "signUpRequest.surname" 'class="form-control" id="lastName" placeholder="Last name" aria-label="Last name"'/>
+            <@spring.showErrors "<br>" "error text-danger"/>
+        </div>
 
-                            </div>
-                            <div class="col-6">
-                                <label for="email" class="form-label"><@spring.message 'register.email'/></label>
-                                <@spring.formInput "userCreationDto.email" 'class="form-control" id="email" placeholder="email" aria-label="Email"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+        <!-- Middle Name (optional) -->
+        <div class="my-5">
+            <label for="middleName">
+                <i class="fas fa-user me-2"></i>Middle Name (optional)
+            </label>
+            <@spring.formInput "signUpRequest.middleName" 'class="form-control" id="middleName" placeholder="Middle name" aria-label="Middle name"'/>
+            <@spring.showErrors "<br>" "error text-danger"/>
+        </div>
 
-                            </div>
-                            <div class="col-6">
-                                <label for="password" class="form-label"><@spring.message 'register.userPassword'/></label>
-                                <@spring.formPasswordInput "userCreationDto.password" 'class="form-control" id="password" placeholder="password" aria-label="password"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+        <!-- Phone Number -->
+        <div class="my-5">
+            <label for="phoneNumber" class="label">
+                <i class="fas fa-phone me-2"></i>Phone Number
+            </label>
+            <@spring.formInput "signUpRequest.phoneNumber" 'class="form-control" id="phoneNumber" placeholder="Phone number" aria-label="Phone number"'/>
+            <@spring.showErrors "<br>" "error text-danger"/>
+        </div>
 
-                            </div>
-                            <div class="col-3">
-                                <label for="age" class="form-label"><@spring.message 'register.age'/></label>
-                                <@spring.formInput "userCreationDto.age" 'class="form-control" id ="age" placeholder="age" aria-label="age"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+        <!-- Password -->
+        <div class="my-5">
+            <label for="password">
+                <i class="fas fa-lock me-2"></i>Password
+            </label>
+            <@spring.formPasswordInput "signUpRequest.password" 'class="form-control" id="password" placeholder="Password" required autocomplete="new-password"'/>
+            <@spring.showErrors "<br>" "error text-danger"/>
+        </div>
 
-                            </div>
-                            <div class="col-9">
-                                <label for="phoneNum" class="form-label"><@spring.message 'register.phone'/></label>
-                                <@spring.formInput "userCreationDto.phoneNumber" 'class="form-control" id="phoneNum" placeholder="phone number" aria-label="phoneNumber"'/>
-                                <@spring.showErrors "<br>" "error text-danger"/>
+        <!-- Terms and Conditions -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="termsAccept" required>
+            <label class="form-check-label" for="termsAccept">
+                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>
+                and <a href="#" class="text-decoration-none">Privacy Policy</a>
+            </label>
+        </div>
 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-element mb-4">
-                        <label for="account-type" class="form-label"><@spring.message 'register.role'/></label>
-                        <select name="accType" id="account-type" class="form-control" required>
-                            <option value=2>applicant</option>
-                            <option value=1>employer</option>
-                        </select>
-                    </div>
-                    <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
-                           value="${(_csrf.token)!'--no-token--'}"/>
-                    <button class="btn btn-primary" type="submit"><@spring.message 'layout.register'/>!</button>
+        <!-- Marketing Emails -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="marketingEmails">
+            <label class="form-check-label" for="marketingEmails">
+                I want to receive promotional emails and updates
+            </label>
+        </div>
 
-                    <a class="btn btn-warning btn-link text-decoration-none text-dark"
-                       onclick="window.location.href='/login'">
-                        <@spring.message 'register.have.account'/>
-                    </a>
-                </fieldset>
-            </form>
-        </#if>
-    </main>
-</@register.layout>
+        <!-- Submit Button -->
+        <button class="btn btn-auth" type="submit">
+            <i class="fas fa-user-plus me-2"></i>
+            Create Account
+        </button>
+
+        <!-- Links -->
+        <div class="auth-links">
+            <div class="text-center">
+                <span class="text-muted">Already have an account?</span>
+                <a href="/auth/login" class="ms-2">
+                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Additional Information -->
+    <div class="mt-4 text-center">
+        <small class="text-muted">
+            <i class="fas fa-shield-alt me-1"></i>
+            All personal information is encrypted and securely stored
+        </small>
+    </div>
+</@authLayout>
