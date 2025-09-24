@@ -1,13 +1,14 @@
 <#include "../layouts/adminLayout.ftlh">
 <@adminLayout>
     <link rel="stylesheet" href="/css/cardDetails.css">
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2><i class="fas fa-credit-card me-2"></i>Card Details</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/cards">Cards</a></li>
+                    <li class="breadcrumb-item"><a href="/cards/all">Cards</a></li>
                     <li class="breadcrumb-item active">Details</li>
                 </ol>
             </nav>
@@ -24,11 +25,11 @@
             <div class="card-visual text-center position-relative">
                 <div class="position-relative">
                     <h6 class="mb-2">BANK CARD</h6>
-                    <div class="card-number mb-3" id="cardNumberDisplay">**** **** **** 1234</div>
+                    <div class="card-number mb-3" id="cardNumberDisplay">${card.cardNumber}</div>
                     <div class="d-flex justify-content-between align-items-end">
                         <div>
                             <small>VALID THRU</small>
-                            <div id="expiryDateDisplay">12/26</div>
+                            <div id="expiryDateDisplay">${card.expiryDate}</div>
                         </div>
                         <div>
                             <i class="fab fa-cc-visa fa-2x"></i>
@@ -36,7 +37,7 @@
                     </div>
                     <div class="mt-3">
                         <small>CARD HOLDER</small>
-                        <div id="cardHolderDisplay">JOHN DOE</div>
+                        <div id="cardHolderDisplay">${card.ownerName?upper_case}</div>
                     </div>
                 </div>
             </div>
@@ -54,97 +55,60 @@
                             <div class="row">
                                 <div class="col-6">
                                     <small class="text-muted">Card ID</small>
-                                    <div class="fw-bold" id="cardId">001</div>
+                                    <div class="fw-bold" id="cardId">${card.id}</div>
                                 </div>
                                 <div class="col-6">
-                                    <small class="text-muted">Card Type</small>
-                                    <div><span class="badge bg-info" id="cardType">DEBIT</span></div>
+                                    <small class="text-muted">Type</small>
+                                    <div class="fw-bold" id="cardType">${card.type}</div>
                                 </div>
-                                <div class="col-6 mt-3">
+                                <div class="col-6 mt-2">
                                     <small class="text-muted">Status</small>
-                                    <div><span class="badge status-badge bg-success" id="cardStatus">ACTIVE</span></div>
+                                    <div><span class="badge status-badge ${card.status}" id="cardStatus">${card.status}</span></div>
                                 </div>
-                                <div class="col-6 mt-3">
+                                <div class="col-6 mt-2">
                                     <small class="text-muted">Created</small>
-                                    <div id="createdDate">2024-01-15</div>
+                                    <div id="createdDate">${card.createdAt}</div>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <small class="text-muted">Current Balance</small>
+                                    <div class="fw-bold fs-4 text-success" id="cardBalance">$${card.balance}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Owner Information -->
                 <div class="col-md-6">
                     <div class="card info-card h-100">
-                        <div class="card-body text-center">
+                        <div class="card-body">
                             <h5 class="card-title">
-                                <i class="fas fa-wallet text-success me-2"></i>Current Balance
+                                <i class="fas fa-user text-primary me-2"></i>Card Owner
                             </h5>
-                            <div class="card-balance text-success" id="cardBalance">$15,000.50</div>
-                            <small class="text-muted">Last updated: <span id="lastUpdated">2 hours ago</span></small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Owner Information -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card info-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-user text-primary me-2"></i>Card Owner
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                             style="width: 50px; height: 50px;">
-                            <span id="ownerInitials">JD</span>
-                        </div>
-                        <div>
-                            <h6 class="mb-1" id="ownerName">John Doe</h6>
-                            <small class="text-muted" id="ownerPhone">+1 (555) 123-4567</small>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-muted">User ID</small>
-                            <div class="fw-bold" id="ownerId">123</div>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">Status</small>
-                            <div><span class="badge bg-success" id="ownerStatus">ACTIVE</span></div>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="#" class="btn btn-outline-primary btn-sm" onclick="viewUserDetails()">
-                            <i class="fas fa-eye me-1"></i>View User Details
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card info-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-line text-success me-2"></i>Quick Stats
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <div class="fw-bold text-primary fs-4" id="totalTransactions">156</div>
-                            <small class="text-muted">Total Transactions</small>
-                        </div>
-                        <div class="col-4">
-                            <div class="fw-bold text-success fs-4" id="monthlySpent">$2,340</div>
-                            <small class="text-muted">This Month</small>
-                        </div>
-                        <div class="col-4">
-                            <div class="fw-bold text-warning fs-4" id="avgTransaction">$89</div>
-                            <small class="text-muted">Avg Transaction</small>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px;">
+                                    <span id="ownerInitials">${card.ownerName}</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1" id="ownerName">${card.ownerName}</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">User ID</small>
+                                    <div class="fw-bold" id="ownerId">${card.ownerId}</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Status</small>
+                                    <div><span class="badge bg-success" id="ownerStatus">ACTIVE</span></div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a class="btn btn-outline-primary btn-sm" href="/admin/users/${card.ownerId}">
+                                    <i class="fas fa-eye me-1"></i>View User Details
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,189 +120,121 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
-                <i class="fas fa-exchange-alt text-info me-2"></i>Recent Transactions
+                <i class="fas fa-exchange-alt text-info me-2"></i>Recent Transactions (Last 10)
             </h5>
-            <a href="#" class="btn btn-outline-primary btn-sm" onclick="viewAllTransactions()">View All</a>
+            <a class="btn btn-outline-primary btn-sm" href="/transactions/all?cardId=${card.id}">
+                <i class="fas fa-list me-1"></i>View All
+            </a>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody id="transactionsTableBody">
-                    <!-- Transactions will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
+            <#if transactions?has_content>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list transactions as transaction>
+                            <tr class="transaction-item">
+                                <td>${transaction.createdAt?date?string("dd MMM yyyy HH:mm")}</td>
+                                <td>
+                                    <i class="fas fa-exchange-alt me-2"></i>
+                                    Transfer
+                                </td>
+                                <td>${transaction.description!'-'}</td>
+                                <td class="<#if (transaction.amount >= 0)>text-success<#else>text-danger</#if>">
+                                    $${transaction.amount?abs}
+                                </td>
+                                <td>
+                                    <span class="badge <#if transaction.status == 'SUCCESS'>bg-success<#elseif transaction.status == 'PENDING'>bg-warning<#else>bg-danger</#if>">
+                                        ${transaction.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+            <#else>
+                <div class="text-center p-4">
+                    <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No transactions found</h5>
+                    <p class="text-muted">This card has no transaction history yet.</p>
+                </div>
+            </#if>
         </div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-    let cardData = {
-        id: 1,
-        cardNumber: "4111111111111111",
-        ownerName: "John Doe",
-        ownerId: 123,
-        ownerPhone: "+1 (555) 123-4567",
-        type: "DEBIT",
-        status: "ACTIVE",
-        balance: 15000.50,
-        expiryDate: "2026-12-31",
-        createdAt: "2024-01-15T10:30:00Z"
-    };
-
-    let recentTransactions = [
-        {
-            id: 1,
-            date: "2024-09-20",
-            type: "Transfer",
-            description: "Transfer to savings",
-            amount: -500.00,
-            status: "SUCCESS"
-        },
-        {
-            id: 2,
-            date: "2024-09-19",
-            type: "Deposit",
-            description: "Salary deposit",
-            amount: 3000.00,
-            status: "SUCCESS"
-        },
-        {
-            id: 3,
-            date: "2024-09-18",
-            type: "Purchase",
-            description: "Online shopping",
-            amount: -89.99,
-            status: "SUCCESS"
+    <style>
+        .card-visual {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-    ];
 
-
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    }
-
-    function getStatusBadgeClass(status) {
-        switch (status) {
-            case 'ACTIVE':
-                return 'bg-success';
-            case 'BLOCKED':
-                return 'bg-danger';
-            case 'EXPIRED':
-                return 'bg-warning';
-            default:
-                return 'bg-secondary';
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            font-weight: bold;
         }
-    }
 
-    function getTransactionTypeIcon(type) {
-        switch (type.toLowerCase()) {
-            case 'transfer':
-                return 'fas fa-exchange-alt';
-            case 'deposit':
-                return 'fas fa-arrow-down text-success';
-            case 'purchase':
-                return 'fas fa-shopping-cart';
-            case 'withdrawal':
-                return 'fas fa-arrow-up text-danger';
-            default:
-                return 'fas fa-circle';
+        .info-card {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 10px;
         }
-    }
 
-    function loadCardDetails() {
-        // Update card visual
-        document.getElementById('cardNumberDisplay').textContent = cardData.cardNumber;
-        document.getElementById('expiryDateDisplay').textContent = new Date(cardData.expiryDate).toLocaleDateString('en-US', {
-            month: '2-digit',
-            year: '2-digit'
-        });
-        document.getElementById('cardHolderDisplay').textContent = cardData.ownerName.toUpperCase();
-
-        // Update card information
-        document.getElementById('cardId').textContent = cardData.id;
-        document.getElementById('cardType').textContent = cardData.type;
-        document.getElementById('cardStatus').textContent = cardData.status;
-        document.getElementById('cardStatus').className = `badge status-badge `+cardData.status;
-        document.getElementById('createdDate').textContent = new Date(cardData.createdAt).toLocaleDateString();
-        document.getElementById('cardBalance').textContent = formatCurrency(cardData.balance);
-
-        // Update owner information
-        document.getElementById('ownerInitials').textContent = cardData.ownerName.split(' ').map(n => n[0]).join('');
-        document.getElementById('ownerName').textContent = cardData.ownerName;
-        document.getElementById('ownerPhone').textContent = cardData.ownerPhone;
-        document.getElementById('ownerId').textContent = cardData.ownerId;
-
-        // Update action buttons based on status
-        updateActionButtons();
-    }
-
-
-    function loadRecentTransactions() {
-        const tableBody = document.getElementById('transactionsTableBody');
-        tableBody.innerHTML = '';
-
-        recentTransactions.forEach(transaction => {
-            const row = document.createElement('tr');
-            row.className = 'transaction-item';
-
-            const date = new Date(transaction.date).toLocaleDateString();
-            const icon = getTransactionTypeIcon(transaction.type);
-            const amountClass = transaction.amount >= 0 ? 'text-success' : 'text-danger';
-            const formattedAmount = formatCurrency(Math.abs(transaction.amount));
-            const badgeClass = transaction.status === 'SUCCESS' ? 'bg-success' : 'bg-danger';
-
-            row.innerHTML =
-                '<td>' + date + '</td>' +
-                '<td>' +
-                '<i class="' + icon + ' me-2"></i>' +
-                transaction.type +
-                '</td>' +
-                '<td>' + transaction.description + '</td>' +
-                '<td class="' + amountClass + '">' +
-                formattedAmount +
-                '</td>' +
-                '<td>' +
-                '<span class="badge ' + badgeClass + '">' +
-                transaction.status +
-                '</span>' +
-                '</td>';
-
-            tableBody.appendChild(row);
-        });
-    }
-
-
-    function viewUserDetails() {
-        window.location.href = `/admin/users/${card.ownerId}`;
-    }
-
-    function viewAllTransactions() {
-        window.location.href = `/admin/transactions?cardId=${card.id}`;
-    }
-
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            window.location.href = '/logout';
+        .status-badge {
+            font-size: 0.8rem;
         }
-    }
 
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', function () {
-        loadCardDetails();
-        loadRecentTransactions();
-    });
-</script>
+        .status-badge.ACTIVE {
+            background-color: #28a745 !important;
+        }
+
+        .status-badge.BLOCKED {
+            background-color: #dc3545 !important;
+        }
+
+        .status-badge.EXPIRED {
+            background-color: #6c757d !important;
+        }
+
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+    <script>
+
+        function viewAllTransactions() {
+            window.location.href = ``;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+    </script>
 </@adminLayout>

@@ -13,7 +13,9 @@ import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -145,7 +147,15 @@ public class TransactionService {
         return transactionRepository.countTransactionsByUserIdAndDateRange(id, start, end);
     }
 
-    public List<TransactionDto> getTransactionsByCardId(Long id) {
-        return null;
+    public List<TransactionDto> getTransactionsByCardId(Long cardId) {
+        log.info("Getting last 10 transactions for card ID: {}", cardId);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Transaction> transactions = transactionRepository.findByCardId(cardId, pageable);
+
+        return transactions.getContent()
+                .stream()
+                .map(transactionMapper::toDto)
+                .toList();
     }
 }
