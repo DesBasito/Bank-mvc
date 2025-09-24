@@ -9,14 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @Repository
 public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
-    @Query("SELECT t FROM Transaction t WHERE t.fromCard.id = :cardId OR t.toCard.id = :cardId")
+    @Query("SELECT t FROM Transaction t WHERE t.fromCard.id = :cardId OR t.toCard.id = :cardId ORDER BY t.createdAt DESC")
     Page<Transaction> findByCardId(@Param("cardId") Long cardId, Pageable pageable);
 
     @Query("SELECT t FROM Transaction t WHERE t.fromCard.owner.id = :userId OR t.toCard.owner.id = :userId")

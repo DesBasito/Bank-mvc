@@ -59,7 +59,7 @@ public class CardController {
         boolean admin = userUtil.isCurrentUserAdmin();
         model.addAttribute("layout",admin ? "adminLayout" : "userLayout");
         model.addAttribute("card", card);
-        model.addAttribute(transactions);
+        model.addAttribute("transactions",transactions);
         if (admin) return "admin/cardDetails";
         else return "user/cardDetails";
     }

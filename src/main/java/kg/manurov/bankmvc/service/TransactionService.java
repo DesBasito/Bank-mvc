@@ -71,25 +71,6 @@ public class TransactionService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Page<TransactionDto> getUserTransactions(Long userId, Long cardId, Pageable pageable) {
-        log.info("Получение транзакций для пользователя {}, карта: {}", userId, cardId);
-
-        Page<Transaction> transactions;
-
-        if (cardId != null) {
-            transactions = transactionRepository.findByCardId(cardId, pageable);
-            Card card = cardRepository.findById(cardId)
-                    .orElseThrow(() -> new NoSuchElementException("Карта не найдена"));
-            if (!Objects.equals(card.getOwner().getId(), userId)) {
-                throw new IllegalArgumentException("Карта не принадлежит пользователю");
-            }
-        } else {
-            transactions = transactionRepository.findByUserId(userId, pageable);
-        }
-
-        return transactions.map(transactionMapper::toDto);
-    }
 
     @Transactional(readOnly = true)
     public TransactionDto getTransactionById(Long transactionId) {

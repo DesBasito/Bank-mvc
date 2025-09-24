@@ -127,7 +127,7 @@
             </a>
         </div>
         <div class="card-body p-0">
-            <#if transactions?has_content>
+            <#if transactions??>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
@@ -142,7 +142,7 @@
                         <tbody>
                         <#list transactions as transaction>
                             <tr class="transaction-item">
-                                <td>${transaction.createdAt?date?string("dd MMM yyyy HH:mm")}</td>
+                                <td>${transaction.createdAt}</td>
                                 <td>
                                     <i class="fas fa-exchange-alt me-2"></i>
                                     Transfer

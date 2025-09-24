@@ -27,7 +27,7 @@ public class UserMapper {
         if (user.getCards() != null && !user.getCards().isEmpty()) {
             List<CardDto> cardDtos = user.getCards().stream()
                     .map(cardMapper::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
             dto.setCards(cardDtos);
         }
 
@@ -52,7 +52,7 @@ public class UserMapper {
 
     private UserDto getUserDto(User user) {
         UserDto dto = new UserDto();
-        dto.setId(String.valueOf(user.getId()));
+        dto.setId(user.getId());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setFirstName(user.getFirstName());
         dto.setMiddleName(user.getMiddleName());
