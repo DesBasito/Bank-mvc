@@ -152,42 +152,6 @@
         </div>
     </div>
 
-    <!-- Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-cogs text-warning me-2"></i>Card Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="btn-group me-2" role="group">
-                        <button class="btn btn-outline-primary" onclick="editCard()">
-                            <i class="fas fa-edit me-1"></i>Edit Card
-                        </button>
-                        <button class="btn btn-outline-success" onclick="adjustBalance()" id="adjustBalanceBtn">
-                            <i class="fas fa-dollar-sign me-1"></i>Adjust Balance
-                        </button>
-                    </div>
-                    <div class="btn-group me-2" role="group">
-                        <button class="btn btn-outline-warning" onclick="toggleCardStatus()" id="toggleStatusBtn">
-                            <i class="fas fa-lock me-1"></i>Block Card
-                        </button>
-                        <button class="btn btn-outline-info" onclick="generateReport()">
-                            <i class="fas fa-file-alt me-1"></i>Generate Report
-                        </button>
-                    </div>
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-outline-danger" onclick="deleteCard()">
-                            <i class="fas fa-trash me-1"></i>Delete Card
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Recent Transactions -->
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -215,51 +179,6 @@
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
-
-<!-- Balance Adjustment Modal -->
-<div class="modal fade" id="balanceModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Adjust Card Balance</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="balanceForm">
-                    <div class="mb-3">
-                        <label class="form-label">Current Balance</label>
-                        <input type="text" class="form-control" id="currentBalance" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Adjustment Type</label>
-                        <select class="form-select" id="adjustmentType">
-                            <option value="add">Add Amount</option>
-                            <option value="subtract">Subtract Amount</option>
-                            <option value="set">Set New Balance</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Amount</label>
-                        <input type="number" class="form-control" id="adjustmentAmount" step="0.01" min="0" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Reason</label>
-                        <textarea class="form-control" id="adjustmentReason" rows="3"
-                                  placeholder="Reason for balance adjustment..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitBalanceAdjustment()">Apply Adjustment
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -303,9 +222,6 @@
         }
     ];
 
-    function maskCardNumber(cardNumber) {
-        return cardNumber.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '**** **** **** $4');
-    }
 
     function formatCurrency(amount) {
         return new Intl.NumberFormat('en-US', {
@@ -344,7 +260,7 @@
 
     function loadCardDetails() {
         // Update card visual
-        document.getElementById('cardNumberDisplay').textContent = maskCardNumber(cardData.cardNumber);
+        document.getElementById('cardNumberDisplay').textContent = cardData.cardNumber;
         document.getElementById('expiryDateDisplay').textContent = new Date(cardData.expiryDate).toLocaleDateString('en-US', {
             month: '2-digit',
             year: '2-digit'
@@ -355,7 +271,7 @@
         document.getElementById('cardId').textContent = cardData.id;
         document.getElementById('cardType').textContent = cardData.type;
         document.getElementById('cardStatus').textContent = cardData.status;
-        document.getElementById('cardStatus').className = `badge status-badge `+cardData.status+;
+        document.getElementById('cardStatus').className = `badge status-badge `+cardData.status;
         document.getElementById('createdDate').textContent = new Date(cardData.createdAt).toLocaleDateString();
         document.getElementById('cardBalance').textContent = formatCurrency(cardData.balance);
 
@@ -369,16 +285,6 @@
         updateActionButtons();
     }
 
-    function updateActionButtons() {
-        const toggleBtn = document.getElementById('toggleStatusBtn');
-        if (cardData.status === 'BLOCKED') {
-            toggleBtn.innerHTML = '<i class="fas fa-unlock me-1"></i>Unblock Card';
-            toggleBtn.className = 'btn btn-outline-success';
-        } else {
-            toggleBtn.innerHTML = '<i class="fas fa-lock me-1"></i>Block Card';
-            toggleBtn.className = 'btn btn-outline-warning';
-        }
-    }
 
     function loadRecentTransactions() {
         const tableBody = document.getElementById('transactionsTableBody');
@@ -414,82 +320,6 @@
         });
     }
 
-    function editCard() {
-        alert('Edit card functionality would be implemented here');
-    }
-
-    function adjustBalance() {
-        document.getElementById('currentBalance').value = formatCurrency(cardData.balance);
-        const balanceModal = new bootstrap.Modal(document.getElementById('balanceModal'));
-        balanceModal.show();
-    }
-
-    function submitBalanceAdjustment() {
-        const adjustmentType = document.getElementById('adjustmentType').value;
-        const amount = parseFloat(document.getElementById('adjustmentAmount').value);
-        const reason = document.getElementById('adjustmentReason').value;
-
-        if (!amount || amount <= 0) {
-            showNotification('Please enter a valid amount', 'danger');
-            return;
-        }
-
-        if (!reason.trim()) {
-            showNotification('Please provide a reason for the adjustment', 'danger');
-            return;
-        }
-
-        // Calculate new balance
-        let newBalance = cardData.balance;
-        switch (adjustmentType) {
-            case 'add':
-                newBalance += amount;
-                break;
-            case 'subtract':
-                newBalance -= amount;
-                break;
-            case 'set':
-                newBalance = amount;
-                break;
-        }
-
-        if (newBalance < 0) {
-            showNotification('Balance cannot be negative', 'danger');
-            return;
-        }
-
-        // Update card balance
-        cardData.balance = newBalance;
-        document.getElementById('cardBalance').textContent = formatCurrency(newBalance);
-
-        // Close modal
-        const balanceModal = bootstrap.Modal.getInstance(document.getElementById('balanceModal'));
-        balanceModal.hide();
-
-        showNotification('Balance adjusted successfully', 'success');
-
-        // Reset form
-        document.getElementById('balanceForm').reset();
-    }
-
-    <#--function toggleCardStatus() {-->
-    <#--    const action = cardData.status === 'BLOCKED' ? 'unblock' : 'block';-->
-    <#--    const actionText = action === 'block' ? 'block' : 'unblock';-->
-
-    <#--    if (confirm(`Are you sure you want to ${actionText} this card?`)) {-->
-    <#--        cardData.status = cardData.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED';-->
-    <#--        loadCardDetails();-->
-    <#--        showNotification(`Card ${actionText}ed successfully`, 'success');-->
-    <#--    }-->
-    <#--}-->
-
-    // function deleteCard() {
-    //     if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
-    //         if (confirm('This will permanently delete the card and all associated data. Are you absolutely sure?')) {
-    //             alert('Card deletion functionality would be implemented here');
-    //         }
-    //     }
-    // }
 
     function viewUserDetails() {
         window.location.href = `/admin/users/${card.ownerId}`;
@@ -497,23 +327,6 @@
 
     function viewAllTransactions() {
         window.location.href = `/admin/transactions?cardId=${card.id}`;
-    }
-
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `alert alert-`+type+` alert-dismissible fade show position-fixed`;
-        notification.style.top = '20px';
-        notification.style.right = '20px';
-        notification.style.zIndex = '9999';
-        notification.innerHTML =
-                message+`
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
     }
 
     function logout() {

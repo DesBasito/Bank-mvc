@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -142,5 +143,9 @@ public class TransactionService {
         Instant end = month.atEndOfMonth().atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC);
 
         return transactionRepository.countTransactionsByUserIdAndDateRange(id, start, end);
+    }
+
+    public List<TransactionDto> getTransactionsByCardId(Long id) {
+        return null;
     }
 }

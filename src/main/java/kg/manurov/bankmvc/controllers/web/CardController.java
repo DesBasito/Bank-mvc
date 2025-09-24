@@ -2,7 +2,9 @@ package kg.manurov.bankmvc.controllers.web;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import kg.manurov.bankmvc.dto.cards.CardDto;
+import kg.manurov.bankmvc.dto.transactions.TransactionDto;
 import kg.manurov.bankmvc.service.CardService;
+import kg.manurov.bankmvc.service.TransactionService;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequestMapping("/cards")
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CardController {
     private final CardService cardService;
     private final AuthenticatedUserUtil userUtil;
+    private final TransactionService transactionService;
 
 
     @GetMapping("/all")
@@ -50,9 +55,11 @@ public class CardController {
             @Parameter(description = "ID карты") @PathVariable Long id,
             Model model) {
         CardDto card = cardService.getCardById(id);
+        List<TransactionDto> transactions = transactionService.getTransactionsByCardId(id);
         boolean admin = userUtil.isCurrentUserAdmin();
         model.addAttribute("layout",admin ? "adminLayout" : "userLayout");
         model.addAttribute("card", card);
+        model.addAttribute(transactions);
         if (admin) return "admin/cardDetails";
         else return "user/cardDetails";
     }
