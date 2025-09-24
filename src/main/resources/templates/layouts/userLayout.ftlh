@@ -30,16 +30,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?active?>" href="user-profile.html"><i class="fas fa-user me-1"></i>Profile</a>
+                        <a class="nav-link <?active?>" href="/profile"><i class="fas fa-user me-1"></i>Profile</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?active?>" href="#"><i class="fas fa-file-alt me-1"></i>Applications</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?active?>" href="user-transactions.html"><i class="fas fa-history me-1"></i>Transactions</a>
+                        <a class="nav-link <?active?>" href="/transactions/my"><i class="fas fa-history me-1"></i>Transactions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?active?>" href="user-transfer.html"><i class="fas fa-exchange-alt me-1"></i>Transfer</a>
+                        <a class="nav-link <?active?>" href="transactions/transfer"><i class="fas fa-exchange-alt me-1"></i>Transfer</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">

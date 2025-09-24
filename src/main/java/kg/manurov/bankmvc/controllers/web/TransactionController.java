@@ -1,6 +1,8 @@
 package kg.manurov.bankmvc.controllers.web;
 
+import kg.manurov.bankmvc.dto.cards.CardDto;
 import kg.manurov.bankmvc.dto.transactions.TransactionDto;
+import kg.manurov.bankmvc.service.CardService;
 import kg.manurov.bankmvc.service.TransactionService;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -20,13 +27,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
+    private final CardService cardService;
+    private final AuthenticatedUserUtil userUtil;
 
     @GetMapping("/all")
     public String getAllTransactions(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable, Model model) {
         Page<TransactionDto> transactions = transactionService.getAllTransactions(pageable);
-        model.addAttribute(transactions);
+        model.addAttribute("transactions",transactions);
         return "admin/adminTransaction";
+    }
+
+    @GetMapping("/my")
+    public String getMyTransactions(
+            @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable, Model model,
+            @RequestParam(required = false, name = "dateFrom") LocalDate dateFrom,
+            @RequestParam(required = false, name = "dateTo") LocalDate dateTo,
+            @RequestParam(required = false, name = "cardId") Long selectedCardId
+            ) {
+        Long userId = userUtil.getCurrentUserId();
+        Page<TransactionDto> transactions = transactionService.getTransactionByUserId(pageable, userId, dateFrom, dateTo, selectedCardId);
+        List<CardDto> cards = cardService.getUserCards(userId);
+        int monthlyTrans = transactionService.getMonthlyTransactionByUserId(userId);
+        BigDecimal totAmount = transactionService.getTotTransAmount(userId);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("monthlyTransactions", monthlyTrans);
+        model.addAttribute("totalAmount", totAmount);
+        model.addAttribute("cardId", selectedCardId);
+        model.addAttribute("userCards", cards);
+        model.addAttribute("dateFrom", dateFrom);
+        model.addAttribute("dateTo", dateTo);
+        return "user/userTransactionHistory";
     }
 }

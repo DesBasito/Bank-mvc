@@ -68,14 +68,14 @@ public class CardMaskingAspect {
                     transactionDto.getId(), currentUsername, isAdmin, isOwner);
 
             if (isAdmin) {
-                transactionDto.setFromCardCardNumber(encryptionUtil.maskCardNumber(transactionDto.getFromCardCardNumber()));
-                transactionDto.setToCardCardNumber(encryptionUtil.maskCardNumber(transactionDto.getToCardCardNumber()));
+                transactionDto.setFromCardNumber(encryptionUtil.maskCardNumber(transactionDto.getFromCardNumber()));
+                transactionDto.setToCardNumber(encryptionUtil.maskCardNumber(transactionDto.getToCardNumber()));
             }
 
         } catch (Exception e) {
             log.warn("Ошибка при маскировании номера карты: {}", e.getMessage());
-            transactionDto.setFromCardCardNumber("****");
-            transactionDto.setToCardCardNumber("****");
+            transactionDto.setFromCardNumber("****");
+            transactionDto.setToCardNumber("****");
         }
     }
 

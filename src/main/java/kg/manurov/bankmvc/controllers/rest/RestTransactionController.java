@@ -1,5 +1,6 @@
 package kg.manurov.bankmvc.controllers.rest;
 
+import kg.manurov.bankmvc.dto.ApiResponse;
 import kg.manurov.bankmvc.dto.transactions.TransactionDto;
 import kg.manurov.bankmvc.dto.transactions.TransferRequest;
 import kg.manurov.bankmvc.service.TransactionService;
@@ -69,10 +70,10 @@ public class RestTransactionController {
                     description = "Access denied for this transaction!")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<TransactionDto> toggleTransaction(
+    @PutMapping("/{id}/refund")
+    public ResponseEntity<ApiResponse<Void>> toggleTransaction(
             @Parameter(description = "Transaction ID") @PathVariable Long id) {
-        TransactionDto transaction = transactionService.refundTransaction(id);
-        return ResponseEntity.ok(transaction);
+        transactionService.refundTransaction(id);
+        return ResponseEntity.ok(ApiResponse.success("Transaction refund successfully!"));
     }
 }

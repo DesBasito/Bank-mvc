@@ -9,6 +9,7 @@ import kg.manurov.bankmvc.enums.EnumInterface;
 import kg.manurov.bankmvc.enums.TransactionStatus;
 import kg.manurov.bankmvc.repositories.CardRepository;
 import kg.manurov.bankmvc.repositories.TransactionRepo;
+import kg.manurov.bankmvc.service.specifications.TransactionSpecification;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -64,7 +67,7 @@ public class TransactionService {
         } catch (Exception e) {
             log.error("Ошибка при выполнении перевода: {}", e.getMessage(), e);
             Transaction failedTransaction = transactionMapper
-                    .toEntityWithError(toCard,fromCard,request, e.getMessage());
+                    .toEntityWithError(toCard, fromCard, request, e.getMessage());
             transactionRepository.save(failedTransaction);
 
             throw new RuntimeException("Ошибка при выполнении перевода: " + e.getMessage());
@@ -105,9 +108,12 @@ public class TransactionService {
 
     public TransactionDto refundTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(NoSuchElementException::new);
-        if (!transaction.getStatus().equals(TransactionStatus.SUCCESS.name())){
+        if (!transaction.getStatus().equals(TransactionStatus.SUCCESS.name())) {
             throw new IllegalArgumentException("The transaction is already processed!");
         }
+
+        cardService.addBalance(transaction.getFromCard().getId(), transaction.getAmount());
+        cardService.deductBalance(transaction.getToCard().getId(), transaction.getAmount());
         transaction.setStatus(TransactionStatus.REFUNDED.name());
         transactionRepository.save(transaction);
         return transactionMapper.toDto(transaction);
@@ -121,6 +127,10 @@ public class TransactionService {
         return transactionRepository.countTransactionsByUserIdAndDateRange(id, start, end);
     }
 
+    public int getMonthlyTransactionByUserId(Long id) {
+        return transactionRepository.countTransactionsByUserId(id);
+    }
+
     public List<TransactionDto> getTransactionsByCardId(Long cardId) {
         log.info("Getting last 10 transactions for card ID: {}", cardId);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -131,5 +141,18 @@ public class TransactionService {
                 .stream()
                 .map(transactionMapper::toDto)
                 .toList();
+    }
+
+    public Page<TransactionDto> getTransactionByUserId(Pageable pageable, Long userId, LocalDate dateFrom, LocalDate dateTo, Long cardId) {
+        Instant from = dateFrom != null ? dateFrom.atStartOfDay().toInstant(ZoneOffset.UTC) : null;
+        Instant to = dateTo != null ? dateTo.atStartOfDay().toInstant(ZoneOffset.UTC) : null;
+
+        Specification<Transaction> spec = TransactionSpecification.createSpecification(userId, from, to, cardId);
+        Page<Transaction> transactions = transactionRepository.findAll(spec, pageable);
+        return transactions.map(transactionMapper::toDto);
+    }
+
+    public BigDecimal getTotTransAmount(Long userId) {
+        return transactionRepository.getTotalAmountByUserId(userId);
     }
 }

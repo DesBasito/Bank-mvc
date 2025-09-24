@@ -23,13 +23,13 @@ public class TransactionDto {
     Long fromCardId;
 
     @Schema(description = "Маскированный номер карты отправителя")
-    String fromCardCardNumber;
+    String fromCardNumber;
 
     @Schema(description = "ID карты получателя")
     Long toCardId;
 
     @Schema(description = "Маскированный номер карты получателя")
-    String toCardCardNumber;
+    String toCardNumber;
 
     @NotNull
     @Schema(description = "Сумма транзакции")

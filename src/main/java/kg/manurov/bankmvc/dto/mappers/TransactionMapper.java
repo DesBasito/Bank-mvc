@@ -18,8 +18,8 @@ public class TransactionMapper {
         dto.setFromCardId(transaction.getFromCard().getId());
         dto.setToCardId(transaction.getToCard().getId());
 
-        dto.setFromCardCardNumber(transaction.getFromCard().getCardNumber());
-        dto.setToCardCardNumber(transaction.getToCard().getCardNumber());
+        dto.setFromCardNumber(transaction.getFromCard().getCardNumber());
+        dto.setToCardNumber(transaction.getToCard().getCardNumber());
 
         dto.setAmount(transaction.getAmount());
         dto.setDescription(transaction.getDescription());
