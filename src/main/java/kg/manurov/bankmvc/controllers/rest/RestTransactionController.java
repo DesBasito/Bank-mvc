@@ -55,7 +55,7 @@ public class RestTransactionController {
     }
 
 
-    @Operation(summary = "Rolling back transaction by ID")
+    @Operation(summary = "Refund transaction by ID")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
@@ -68,12 +68,11 @@ public class RestTransactionController {
                     responseCode = "403",
                     description = "Access denied for this transaction!")
     })
-    @PreAuthorize("@authenticatedUserUtil.isCardOwner(#id, authentication.name) or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDto> toggleTransaction(
-            @Parameter(description = "Transaction ID") @PathVariable Long id,
-            @RequestParam String status) {
-        TransactionDto transaction = transactionService.toggleTransaction(id, status);
+            @Parameter(description = "Transaction ID") @PathVariable Long id) {
+        TransactionDto transaction = transactionService.refundTransaction(id);
         return ResponseEntity.ok(transaction);
     }
 }

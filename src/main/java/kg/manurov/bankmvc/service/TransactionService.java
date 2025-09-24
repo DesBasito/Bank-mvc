@@ -103,19 +103,12 @@ public class TransactionService {
         return transactionRepository.findAll(pageable).map(transactionMapper::toDto);
     }
 
-    public TransactionDto toggleTransaction(Long id, String status) {
+    public TransactionDto refundTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(NoSuchElementException::new);
-        if (!transaction.getStatus().equals(TransactionStatus.PENDING.name())){
+        if (!transaction.getStatus().equals(TransactionStatus.SUCCESS.name())){
             throw new IllegalArgumentException("The transaction is already processed!");
         }
-        if (!EnumInterface.isExists(TransactionStatus.class, status)){
-            throw new NoSuchElementException("Such a transaction status does not exist: " + status+ ". -> "
-                                             + EnumInterface.getEnumDescription(TransactionStatus.class));
-        }
-        if (userUtil.isCardOwner(id,userUtil.getCurrentUsername()) && !status.equals(TransactionStatus.CANCELLED.name())){
-            throw new AccessDeniedException("You have no right for such operation!");
-        }
-        transaction.setStatus(status.toUpperCase());
+        transaction.setStatus(TransactionStatus.REFUNDED.name());
         transactionRepository.save(transaction);
         return transactionMapper.toDto(transaction);
     }
