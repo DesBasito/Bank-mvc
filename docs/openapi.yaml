@@ -1,0 +1,1026 @@
+---
+openapi: "3.0.1"
+info:
+  title: "Bank Card Management System API"
+  description: "REST API for bank card management with features:\n\n- User authentication\
+    \ and authorization\n- Card management (creation, viewing, blocking)\n- Transfers\
+    \ between cards\n- System administration\n\n**User Roles:**\n- USER: basic operations\
+    \ with own cards\n- ADMIN: full system access\n\n**Security:**\n- Basic Authentication\
+    \ (username/password)\n- Card number encryption\n- Sensitive data masking\n"
+  contact:
+    name: "Abu"
+    url: "https://github.com/DesBasito"
+    email: "out1of1mind1exception@gmail.com"
+  version: "1.0.0"
+servers:
+- url: "http://localhost:8080/api/v1"
+  description: "Local development server"
+security:
+- Basic Authentication: []
+tags:
+- name: "Cards"
+  description: "Bank card management operations"
+- name: "Заявки на карты"
+  description: "Управление заявками на создание карт"
+- name: "Запросы на блокировку карт"
+  description: "Управление запросами на блокировку банковских карт"
+- name: "Транзакции"
+  description: "Операции с переводами между картами"
+- name: "Управление пользователями"
+  description: "Административные операции с пользователями"
+paths:
+  /api/v1/transactions/{id}/refund:
+    put:
+      tags:
+      - "Транзакции"
+      summary: "Refund transaction by ID"
+      operationId: "toggleTransaction"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Transaction ID"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Transaction rolled back successfully!"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
+        "404":
+          description: "Transaction not found!"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "403":
+          description: "Access denied for this transaction!"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+      security:
+      - Basic Authentication: []
+  /api/v1/cards/{id}/toggle:
+    put:
+      tags:
+      - "Cards"
+      summary: "Change card status (admin)"
+      description: "Change card status by administrator"
+      operationId: "toggleCard"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "card ID"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+      security:
+      - Basic Authentication: []
+      - Bearer Authentication: []
+  /api/v1/users/{id}/toggle-status:
+    post:
+      tags:
+      - "Управление пользователями"
+      summary: "Toggle user status"
+      description: "Enable or disable user account"
+      operationId: "toggleUserStatus"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "User ID"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+      security:
+      - Basic Authentication: []
+  /api/v1/transactions/transfer:
+    post:
+      tags:
+      - "Транзакции"
+      summary: "Перевод между своими картами"
+      description: "Перевод средств между картами текущего пользователя"
+      operationId: "transferBetweenMyCards"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequest"
+        required: true
+      responses:
+        "200":
+          description: "Перевод успешно выполнен"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
+        "400":
+          description: "Некорректные данные для перевода"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
+        "403":
+          description: "Карта не принадлежит пользователю"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests:
+    post:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Create card block request"
+      description: "Creating a request to block own card by user"
+      operationId: "createBlockRequest"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardBlockRequestCreateDto"
+        required: true
+      responses:
+        "200":
+          description: "Block request created successfully"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "403":
+          description: "No access to this card"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: "Invalid data or card is already blocked"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests/{id}/reject:
+    post:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Отклонить запрос на блокировку (админ)"
+      description: "Отклонение запроса на блокировку администратором"
+      operationId: "rejectBlockRequest"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID запроса на блокировку"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      - name: "adminComment"
+        in: "query"
+        description: "Комментарий администратора (причина отклонения)"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardBlockRequestDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests/{id}/cancel:
+    post:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Отменить запрос на блокировку"
+      description: "Отмена запроса на блокировку пользователем (только в статусе PENDING)"
+      operationId: "cancelBlockRequest"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID запроса на блокировку"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+                enum:
+                - "100 CONTINUE"
+                - "101 SWITCHING_PROTOCOLS"
+                - "102 PROCESSING"
+                - "103 EARLY_HINTS"
+                - "103 CHECKPOINT"
+                - "200 OK"
+                - "201 CREATED"
+                - "202 ACCEPTED"
+                - "203 NON_AUTHORITATIVE_INFORMATION"
+                - "204 NO_CONTENT"
+                - "205 RESET_CONTENT"
+                - "206 PARTIAL_CONTENT"
+                - "207 MULTI_STATUS"
+                - "208 ALREADY_REPORTED"
+                - "226 IM_USED"
+                - "300 MULTIPLE_CHOICES"
+                - "301 MOVED_PERMANENTLY"
+                - "302 FOUND"
+                - "302 MOVED_TEMPORARILY"
+                - "303 SEE_OTHER"
+                - "304 NOT_MODIFIED"
+                - "305 USE_PROXY"
+                - "307 TEMPORARY_REDIRECT"
+                - "308 PERMANENT_REDIRECT"
+                - "400 BAD_REQUEST"
+                - "401 UNAUTHORIZED"
+                - "402 PAYMENT_REQUIRED"
+                - "403 FORBIDDEN"
+                - "404 NOT_FOUND"
+                - "405 METHOD_NOT_ALLOWED"
+                - "406 NOT_ACCEPTABLE"
+                - "407 PROXY_AUTHENTICATION_REQUIRED"
+                - "408 REQUEST_TIMEOUT"
+                - "409 CONFLICT"
+                - "410 GONE"
+                - "411 LENGTH_REQUIRED"
+                - "412 PRECONDITION_FAILED"
+                - "413 PAYLOAD_TOO_LARGE"
+                - "413 REQUEST_ENTITY_TOO_LARGE"
+                - "414 URI_TOO_LONG"
+                - "414 REQUEST_URI_TOO_LONG"
+                - "415 UNSUPPORTED_MEDIA_TYPE"
+                - "416 REQUESTED_RANGE_NOT_SATISFIABLE"
+                - "417 EXPECTATION_FAILED"
+                - "418 I_AM_A_TEAPOT"
+                - "419 INSUFFICIENT_SPACE_ON_RESOURCE"
+                - "420 METHOD_FAILURE"
+                - "421 DESTINATION_LOCKED"
+                - "422 UNPROCESSABLE_ENTITY"
+                - "423 LOCKED"
+                - "424 FAILED_DEPENDENCY"
+                - "425 TOO_EARLY"
+                - "426 UPGRADE_REQUIRED"
+                - "428 PRECONDITION_REQUIRED"
+                - "429 TOO_MANY_REQUESTS"
+                - "431 REQUEST_HEADER_FIELDS_TOO_LARGE"
+                - "451 UNAVAILABLE_FOR_LEGAL_REASONS"
+                - "500 INTERNAL_SERVER_ERROR"
+                - "501 NOT_IMPLEMENTED"
+                - "502 BAD_GATEWAY"
+                - "503 SERVICE_UNAVAILABLE"
+                - "504 GATEWAY_TIMEOUT"
+                - "505 HTTP_VERSION_NOT_SUPPORTED"
+                - "506 VARIANT_ALSO_NEGOTIATES"
+                - "507 INSUFFICIENT_STORAGE"
+                - "508 LOOP_DETECTED"
+                - "509 BANDWIDTH_LIMIT_EXCEEDED"
+                - "510 NOT_EXTENDED"
+                - "511 NETWORK_AUTHENTICATION_REQUIRED"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests/{id}/approve:
+    post:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Одобрить запрос на блокировку (админ)"
+      description: "Одобрение запроса на блокировку и блокировка карты"
+      operationId: "approveBlockRequest"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID запроса на блокировку"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      - name: "adminComment"
+        in: "query"
+        description: "Комментарий администратора"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "Запрос одобрен, карта заблокирована"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardBlockRequestDto"
+        "400":
+          description: "Запрос уже обработан"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardBlockRequestDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-applications:
+    post:
+      tags:
+      - "Заявки на карты"
+      summary: "Create card application"
+      description: "Creating a new card application by user"
+      operationId: "createApplication"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardApplicationRequest"
+        required: true
+      responses:
+        "400":
+          description: "Bad request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "200":
+          description: "Application created successfully"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-applications/{id}/reject:
+    post:
+      tags:
+      - "Заявки на карты"
+      summary: "Отклонить заявку (админ)"
+      description: "Отклонение заявки администратором"
+      operationId: "rejectApplication"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID заявки"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      - name: "reason"
+        in: "query"
+        description: "Причина отклонения"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardApplicationDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-applications/{id}/cancel:
+    post:
+      tags:
+      - "Заявки на карты"
+      summary: "Отменить заявку"
+      description: "Отмена заявки пользователем (только в статусе PENDING)"
+      operationId: "cancelApplication"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID заявки"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardApplicationDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-applications/{id}/approve:
+    post:
+      tags:
+      - "Заявки на карты"
+      summary: "Одобрить заявку (админ)"
+      description: "Одобрение заявки и создание карты"
+      operationId: "approveApplication"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID заявки"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "400":
+          description: "Заявка уже обработана"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+        "200":
+          description: "Заявка одобрена, карта создана"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/cards:
+    get:
+      tags:
+      - "Cards"
+      summary: "Get card by number"
+      description: "Get detailed card information by its number"
+      operationId: "getCardByNumber"
+      parameters:
+      - name: "number"
+        in: "query"
+        description: "Card number"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "403":
+          description: "No access to card"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+        "404":
+          description: "Card not found"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+        "200":
+          description: "Card information retrieved"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+      security:
+      - Basic Authentication: []
+      - Bearer Authentication: []
+  /api/v1/cards/my/active:
+    get:
+      tags:
+      - "Cards"
+      summary: "Get user's active cards"
+      description: "Get list of active cards for current user"
+      operationId: "getMyActiveCards"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CardDto"
+      security:
+      - Basic Authentication: []
+      - Bearer Authentication: []
+  /api/v1/card-block-requests/{id}:
+    get:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Получить запрос на блокировку по ID"
+      description: "Получение подробной информации о запросе на блокировку"
+      operationId: "getBlockRequest"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID запроса на блокировку"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardBlockRequestDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests/my:
+    get:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Получить мои запросы на блокировку"
+      description: "Получение списка запросов на блокировку текущего пользователя"
+      operationId: "getMyBlockRequests"
+      parameters:
+      - name: "pageable"
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageCardBlockRequestDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-block-requests/admin/all:
+    get:
+      tags:
+      - "Запросы на блокировку карт"
+      summary: "Получить все запросы на блокировку (админ)"
+      description: "Получение всех запросов на блокировку в системе (только для ад\
+        министраторов)"
+      operationId: "getAllBlockRequests"
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Статус запроса"
+        required: false
+        schema:
+          type: "string"
+      - name: "pageable"
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageCardBlockRequestDto"
+      security:
+      - Basic Authentication: []
+  /api/v1/card-applications/my:
+    get:
+      tags:
+      - "card-application-controller"
+      operationId: "getMyApplications"
+      parameters:
+      - name: "pageable"
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /api/v1/card-applications/admin/all:
+    get:
+      tags:
+      - "card-application-controller"
+      operationId: "getAllApplications"
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Application status"
+        required: false
+        schema:
+          type: "string"
+      - name: "pageable"
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageCardApplicationDto"
+  /api/v1/users/{id}:
+    delete:
+      tags:
+      - "Управление пользователями"
+      summary: "Удалить пользователя"
+      description: "Удаление пользователя из системы"
+      operationId: "deleteUser"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID пользователя"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Пользователь удален"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Нельзя удалить пользователя с активными картами"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+      security:
+      - Basic Authentication: []
+components:
+  schemas:
+    TransactionDto:
+      required:
+      - "amount"
+      - "createdAt"
+      - "status"
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "ID транзакции"
+          format: "int64"
+        fromCardId:
+          type: "integer"
+          description: "ID карты отправителя"
+          format: "int64"
+        fromCardNumber:
+          type: "string"
+          description: "Маскированный номер карты отправителя"
+        toCardId:
+          type: "integer"
+          description: "ID карты получателя"
+          format: "int64"
+        toCardNumber:
+          type: "string"
+          description: "Маскированный номер карты получателя"
+        amount:
+          type: "number"
+          description: "Сумма транзакции"
+        description:
+          type: "string"
+          description: "Описание транзакции"
+        status:
+          type: "string"
+          description: "Статус транзакции"
+          enum:
+          - "SUCCESS"
+          - "CANCELLED"
+          - "REFUNDED"
+        createdAt:
+          type: "string"
+          description: "Дата создания транзакции"
+          format: "date-time"
+        processedAt:
+          type: "string"
+          description: "Дата обработки транзакции"
+          format: "date-time"
+        errorMessage:
+          type: "string"
+          description: "Сообщение об ошибке (если есть)"
+      description: "Информация о транзакции"
+    ApiResponseVoid:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+        message:
+          type: "string"
+        data:
+          type: "object"
+    TransferRequest:
+      required:
+      - "amount"
+      - "fromCardId"
+      - "toCardId"
+      type: "object"
+      properties:
+        fromCardId:
+          type: "integer"
+          description: "ID карты отправителя"
+          format: "int64"
+          example: 1
+        toCardId:
+          type: "integer"
+          description: "ID карты получателя"
+          format: "int64"
+          example: 2
+        amount:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: "number"
+          description: "Сумма перевода"
+          example: 1500.5
+        description:
+          maxLength: 500
+          minLength: 0
+          type: "string"
+          description: "Описание перевода"
+          example: "Перевод на другую карту"
+      description: "Запрос на перевод между картами"
+    CardBlockRequestCreateDto:
+      required:
+      - "cardId"
+      - "reason"
+      type: "object"
+      properties:
+        cardId:
+          type: "integer"
+          description: "Card ID to block"
+          format: "int64"
+          example: 1
+        reason:
+          maxLength: 50
+          minLength: 0
+          type: "string"
+          description: "Block reason"
+          example: "LOST"
+          enum:
+          - "LOST"
+          - "STOLEN"
+          - "COMPROMISED"
+          - "SUSPICIOUS"
+          - "OTHER"
+      description: "Card block request creation"
+    ApiResponse:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+        message:
+          type: "string"
+        data:
+          type: "object"
+    CardBlockRequestDto:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "ID запроса"
+          format: "int64"
+        cardId:
+          type: "integer"
+          description: "ID карты"
+          format: "int64"
+        cardNumber:
+          type: "string"
+          description: "Номер карты (маскированный)"
+        userId:
+          type: "integer"
+          description: "ID пользователя"
+          format: "int64"
+        userName:
+          type: "string"
+          description: "Имя пользователя"
+        reason:
+          type: "string"
+          description: "Причина блокировки"
+        status:
+          type: "string"
+          description: "Статус запроса"
+          enum:
+          - "PENDING"
+          - "APPROVED"
+          - "REJECTED"
+        adminComment:
+          type: "string"
+          description: "Комментарий администратора"
+        createdAt:
+          type: "string"
+          description: "Дата создания запроса"
+          format: "date-time"
+        processedAt:
+          type: "string"
+          description: "Дата обработки запроса"
+          format: "date-time"
+      description: "Запрос на блокировку карты"
+    CardApplicationRequest:
+      required:
+      - "cardType"
+      type: "object"
+      properties:
+        cardType:
+          type: "string"
+          description: "Тип карты"
+          example: "DEBIT"
+          enum:
+          - "DEBIT"
+          - "CREDIT"
+          - "VIRTUAL"
+          - "PREPAID"
+        comment:
+          type: "string"
+          description: "Комментарий к заявке"
+          example: "Основная карта для зарплаты"
+      description: "Запрос на создание карты"
+    CardApplicationDto:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "ID заявки"
+          format: "int64"
+        userId:
+          type: "integer"
+          description: "ID пользователя"
+          format: "int64"
+        userName:
+          type: "string"
+          description: "Имя пользователя"
+        cardType:
+          type: "string"
+          description: "Тип карты"
+        comment:
+          type: "string"
+          description: "Комментарий к заявке"
+        status:
+          type: "string"
+          description: "Статус заявки"
+          enum:
+          - "PENDING"
+          - "APPROVED"
+          - "REJECTED"
+          - "CANCELLED"
+        createdAt:
+          type: "string"
+          description: "Дата создания заявки"
+          format: "date-time"
+        processedAt:
+          type: "string"
+          description: "Дата обработки заявки"
+          format: "date-time"
+      description: "Заявка на создание карты"
+    CardDto:
+      required:
+      - "balance"
+      - "cardNumber"
+      - "createdAt"
+      - "expiryDate"
+      - "ownerName"
+      - "status"
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        cardNumber:
+          type: "string"
+        ownerName:
+          type: "string"
+        ownerId:
+          type: "integer"
+          format: "int64"
+        expiryDate:
+          type: "string"
+          format: "date"
+        status:
+          type: "string"
+        type:
+          type: "string"
+        balance:
+          type: "number"
+        createdAt:
+          type: "string"
+          format: "date"
+        updatedAt:
+          type: "string"
+          format: "date"
+    Pageable:
+      type: "object"
+      properties:
+        page:
+          minimum: 0
+          type: "integer"
+          format: "int32"
+        size:
+          minimum: 1
+          type: "integer"
+          format: "int32"
+        sort:
+          type: "array"
+          items:
+            type: "string"
+    PageCardBlockRequestDto:
+      type: "object"
+      properties:
+        totalPages:
+          type: "integer"
+          format: "int32"
+        totalElements:
+          type: "integer"
+          format: "int64"
+        first:
+          type: "boolean"
+        last:
+          type: "boolean"
+        size:
+          type: "integer"
+          format: "int32"
+        content:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CardBlockRequestDto"
+        number:
+          type: "integer"
+          format: "int32"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: "integer"
+          format: "int32"
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: "boolean"
+    PageableObject:
+      type: "object"
+      properties:
+        offset:
+          type: "integer"
+          format: "int64"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        pageNumber:
+          type: "integer"
+          format: "int32"
+        pageSize:
+          type: "integer"
+          format: "int32"
+        paged:
+          type: "boolean"
+        unpaged:
+          type: "boolean"
+    SortObject:
+      type: "object"
+      properties:
+        empty:
+          type: "boolean"
+        unsorted:
+          type: "boolean"
+        sorted:
+          type: "boolean"
+    PageCardApplicationDto:
+      type: "object"
+      properties:
+        totalPages:
+          type: "integer"
+          format: "int32"
+        totalElements:
+          type: "integer"
+          format: "int64"
+        first:
+          type: "boolean"
+        last:
+          type: "boolean"
+        size:
+          type: "integer"
+          format: "int32"
+        content:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CardApplicationDto"
+        number:
+          type: "integer"
+          format: "int32"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: "integer"
+          format: "int32"
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: "boolean"
+  securitySchemes:
+    Basic Authentication:
+      type: "http"
+      description: "Basic Authentication"
+      scheme: "basic"
