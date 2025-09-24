@@ -30,9 +30,6 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-users me-2"></i>Users Management</h2>
         <div class="d-flex gap-2">
-          <button class="btn btn-success" onclick="createNewUser()">
-            <i class="fas fa-plus me-1"></i>Create User
-          </button>
           <button class="btn btn-outline-secondary" onclick="logout()">
             <i class="fas fa-sign-out-alt me-1"></i>Logout
           </button>
@@ -95,7 +92,7 @@
             </select>
           </div>
           <div class="col-md-3">
-            <label class="form-label fw-bold">Registration Date</label>
+            <label class="form-label fw-bold">Sort by Registration Date</label>
             <select class="form-select" id="dateFilter" onchange="filterUsers()">
               <option value="">All Time</option>
               <option value="today">Today</option>
@@ -355,9 +352,6 @@
                             <button class="btn btn-sm btn-outline-primary" onclick="viewUserDetails(${user.id})" title="View Details">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-info" onclick="editUser(${user.id})" title="Edit User">
-                                <i class="fas fa-edit"></i>
-                            </button>
                             ${user.enabled ? `
                                 <button class="btn btn-sm btn-outline-warning" onclick="showUserActionModal(${user.id}, 'block')" title="Block User">
                                     <i class="fas fa-user-lock"></i>
@@ -449,26 +443,6 @@
     updateStats();
   }
 
-  function filterByDate(dateString, filter) {
-    const userDate = new Date(dateString);
-    const now = new Date();
-
-    switch(filter) {
-      case 'today':
-        return userDate.toDateString() === now.toDateString();
-      case 'week':
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return userDate >= weekAgo;
-      case 'month':
-        const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        return userDate >= monthAgo;
-      case 'quarter':
-        const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-        return userDate >= quarterAgo;
-      default:
-        return true;
-    }
-  }
 
   function clearFilters() {
     document.getElementById('statusFilter').value = '';
@@ -496,14 +470,6 @@
 
   function viewUserDetails(userId) {
     window.location.href = `/admin/users/${userId}`;
-  }
-
-  function editUser(userId) {
-    alert(`Edit user functionality would be implemented here for user ID: ${userId}`);
-  }
-
-  function createNewUser() {
-    alert('Create new user functionality would be implemented here');
   }
 
   function showUserActionModal(userId, action) {
