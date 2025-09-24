@@ -1,5 +1,6 @@
 package kg.manurov.bankmvc.controllers.rest;
 
+import kg.manurov.bankmvc.dto.ApiResponse;
 import kg.manurov.bankmvc.dto.cardApplication.CardApplicationDto;
 import kg.manurov.bankmvc.dto.cardApplication.CardApplicationRequest;
 import kg.manurov.bankmvc.dto.cards.CardDto;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,26 +36,30 @@ public class RestCardApplicationController {
     private final AuthenticatedUserUtil userUtil;
 
 
-
-    @Operation(summary = "Создать заявку на карту",
-            description = "Создание заявки на новую карту пользователем")
+    @Operation(summary = "Create card application",
+            description = "Creating a new card application by user")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Заявка создана",
-                    content = @Content(schema = @Schema(implementation = CardApplicationDto.class)))
+                    description = "Application created successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<CardApplicationDto> createApplication(
+    public ResponseEntity<ApiResponse<CardApplicationDto>> createApplication(
             @Valid @RequestBody CardApplicationRequest request) {
 
         Long userId = userUtil.getCurrentUserId();
         String userName = userUtil.getCurrentUsername();
-        log.info("Пользователь {} создает заявку на карту типа {}", userName, request.getCardType());
-        CardApplicationDto application = cardApplicationService.createCardApplication(userId, request);
+        log.info("User {} creates card application of type {}", userName, request.getCardType());
 
-        return ResponseEntity.ok(application);
+        CardApplicationDto result = cardApplicationService.createCardApplication(userId, request);
+
+        return ResponseEntity.ok(ApiResponse.success("Card application submitted successfully", result));
     }
 
 //    @Operation(summary = "Получить мои заявки",

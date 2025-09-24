@@ -1,12 +1,9 @@
 /**
  * Toggle card status (block/unblock) via AJAX
  * @param {number} cardId - The ID of the card
- * @param {string} action - 'block' or 'unblock'
  */
-function toggleCardStatus(cardId, action) {
-    const actionText = action === 'block' ? 'block' : 'unblock';
-
-    if (!confirm(`Are you sure you want to ${actionText} this card?`)) {
+function toggleCardStatus(cardId) {;
+    if (!confirm(`Are you sure you want to change status of this card?`)) {
         return;
     }
 
@@ -15,7 +12,7 @@ function toggleCardStatus(cardId, action) {
     loadingModal.show();
 
     // Prepare request
-    const url = `/api/v1/cards/${cardId}/${action}`;
+    const url = `/api/v1/cards/${cardId}/toggle`;
 
     fetch(url, {
         method: 'PUT',
@@ -35,8 +32,7 @@ function toggleCardStatus(cardId, action) {
             }
         })
         .then(data => {
-            showNotification(`Card ${actionText}ed successfully!`, 'success');
-
+            showNotification(`Card toggled successfully!`, 'success');
             // Reload page to reflect changes
             setTimeout(() => {
                 window.location.reload();
@@ -44,7 +40,7 @@ function toggleCardStatus(cardId, action) {
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification(`Failed to ${actionText} card. Please try again.`, 'danger');
+            showNotification(`Failed to change card status. Please try again.`, 'danger');
         });
 }
 

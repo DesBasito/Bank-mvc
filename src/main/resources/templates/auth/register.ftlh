@@ -3,51 +3,47 @@
 <@authLayout title="Create Account" subtitle="Join us today! Create your secure banking account" ; spring>
     <form id="registerForm" method="POST" action="/auth/register">
         <!-- First Name -->
-        <div class="form-floating">
+        <div class="my-5">
             <label for="firstName" id="userName">
                 <i class="fas fa-user me-2"></i>First Name
             </label>
-            <@spring.formInput "userCreationDto.name" 'class="form-control" id="userName" placeholder="First name" aria-label="First name"'/>
+            <@spring.formInput "signUpRequest.name" 'class="form-control" id="userName" placeholder="First name" aria-label="First name"'/>
             <@spring.showErrors "<br>" "error text-danger"/>
         </div>
 
         <!-- Last Name -->
-        <div class="form-floating">
+        <div class="my-5">
             <label for="lastName">
                 <i class="fas fa-user me-2"></i>Last Name
             </label>
-            <@spring.formInput "userCreationDto.surname" 'class="form-control" id="lastName" placeholder="Last name" aria-label="Last name"'/>
+            <@spring.formInput "signUpRequest.surname" 'class="form-control" id="lastName" placeholder="Last name" aria-label="Last name"'/>
             <@spring.showErrors "<br>" "error text-danger"/>
         </div>
 
         <!-- Middle Name (optional) -->
-        <div class="form-floating">
+        <div class="my-5">
             <label for="middleName">
                 <i class="fas fa-user me-2"></i>Middle Name (optional)
             </label>
-            <@spring.formInput "userCreationDto.middleName" 'class="form-control" id="middleName" placeholder="Middle name" aria-label="Middle name"'/>
+            <@spring.formInput "signUpRequest.middleName" 'class="form-control" id="middleName" placeholder="Middle name" aria-label="Middle name"'/>
             <@spring.showErrors "<br>" "error text-danger"/>
         </div>
 
         <!-- Phone Number -->
-        <div class="form-floating">
-            <label for="phoneNumber">
+        <div class="my-5">
+            <label for="phoneNumber" class="label">
                 <i class="fas fa-phone me-2"></i>Phone Number
             </label>
-            <div class="form-text">Format: +7(XXX)XXXXXXX</div>
-            <@spring.formInput "userCreationDto.phoneNumber" 'class="form-control" id="phoneNumber" placeholder="Phone number" aria-label="Phone number"'/>
+            <@spring.formInput "signUpRequest.phoneNumber" 'class="form-control" id="phoneNumber" placeholder="Phone number" aria-label="Phone number"'/>
             <@spring.showErrors "<br>" "error text-danger"/>
         </div>
 
         <!-- Password -->
-        <div class="form-floating">
+        <div class="my-5">
             <label for="password">
                 <i class="fas fa-lock me-2"></i>Password
             </label>
-            <div class="form-text">
-                Password must be between 5 and 11 characters
-            </div>
-            <@spring.formPasswordInput "userCreationDto.password" 'class="form-control" id="password" placeholder="Password" required autocomplete="new-password"'/>
+            <@spring.formPasswordInput "signUpRequest.password" 'class="form-control" id="password" placeholder="Password" required autocomplete="new-password"'/>
             <@spring.showErrors "<br>" "error text-danger"/>
         </div>
 

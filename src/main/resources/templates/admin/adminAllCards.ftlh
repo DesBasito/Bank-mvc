@@ -1,6 +1,7 @@
 <#-- Admin All Cards Template using FreeMarker -->
 <#include "../layouts/adminLayout.ftlh">
 <@adminLayout ; spring>
+    <link rel="stylesheet" href="/css/adminAllCards.css">
     <!-- Header with title and actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-credit-card me-2"></i>All Cards Management</h2>
@@ -132,7 +133,7 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         <!-- View Details Button -->
-                                        <a href="/admin/cards/${card.id}"
+                                        <a href="/cards/${card.id}"
                                            class="btn btn-sm btn-outline-primary"
                                            title="View Details">
                                             <i class="fas fa-eye"></i>
@@ -141,13 +142,13 @@
                                         <!-- Block/Unblock Button -->
                                         <#if card.status == 'BLOCKED'>
                                             <button class="btn btn-sm btn-outline-success"
-                                                    onclick="toggleCardStatus(${card.id}, 'unblock')"
+                                                    onclick="toggleCardStatus(${card.id})"
                                                     title="Unblock Card">
                                                 <i class="fas fa-unlock"></i>
                                             </button>
                                         <#else>
                                             <button class="btn btn-sm btn-outline-danger"
-                                                    onclick="toggleCardStatus(${card.id}, 'block')"
+                                                    onclick="toggleCardStatus(${card.id})"
                                                     title="Block Card">
                                                 <i class="fas fa-lock"></i>
                                             </button>
@@ -270,74 +271,66 @@
             </div>
         </div>
     </div>
-
-    <!-- Custom Styles -->
-    <style>
-        .balance-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1.5rem;
-            border: 1px solid #e9ecef;
-        }
-
-        .card-item {
-            transition: all 0.3s ease;
-        }
-
-        .card-item:hover {
-            background-color: rgba(0, 123, 255, 0.05);
-        }
-
-        .card-number {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: #495057;
-        }
-
-        .balance {
-            font-size: 1.05rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-
-        .status-badge {
-            font-size: 0.75rem;
-            padding: 0.35rem 0.65rem;
-            font-weight: 500;
-        }
-
-        .avatar-sm {
-            width: 32px;
-            height: 32px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .table th {
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
-            color: #495057;
-            background-color: #f8f9fa !important;
-        }
-
-        .pagination .page-link {
-            border-radius: 6px;
-            margin: 0 2px;
-            border: 1px solid #dee2e6;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-group .btn {
-            border-radius: 4px;
-            margin-right: 2px;
-        }
-    </style>
-
     <!-- JavaScript for Card Management -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"/>
-    <script src="/js/adminAllCards.js"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /**
+         * Toggle card status (block/unblock) via AJAX
+         * @param {number} cardId - The ID of the card
+         */
+
+        function toggleCardStatus(cardId) {
+            if (!confirm(`Are you sure you want to change status of this card?`)) {
+                return;
+            }
+
+            const url = `/api/v1/cards/` + cardId + `/toggle`;
+
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Card status changed successfully!');
+                    } else {
+                        alert('Operation failed:' + data.message);
+
+                    }
+                })
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        }
+
+        /**
+         * Logout function
+         */
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('sort')?.addEventListener('change', function () {
+                this.form.submit();
+            });
+
+            // Handle search form submission with Enter key
+            document.getElementById('search')?.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.form.submit();
+                }
+            });
+
+            console.log('Admin All Cards page initialized');
+        });
+    </script>
 </@adminLayout>

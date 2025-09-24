@@ -33,7 +33,7 @@ public class CardMapper {
         dto.setOwnerId(card.getOwner().getId());
         dto.setExpiryDate(card.getExpiryDate());
         dto.setStatus(card.getStatus());
-        dto.setType( card.getType());
+        dto.setType(card.getType());
         dto.setBalance(card.getBalance());
         dto.setCreatedAt(LocalDate.ofInstant(card.getCreatedAt(), zoneId));
         dto.setUpdatedAt(LocalDate.ofInstant(card.getUpdatedAt(), zoneId));

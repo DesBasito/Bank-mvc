@@ -1,0 +1,62 @@
+ .balance-section {
+     background: #f8f9fa;
+     border-radius: 10px;
+     padding: 1.5rem;
+     border: 1px solid #e9ecef;
+ }
+
+.card-item {
+    transition: all 0.3s ease;
+}
+
+.card-item:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.card-number {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #495057;
+}
+
+.balance {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    font-weight: 500;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.table th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa !important;
+}
+
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-group .btn {
+    border-radius: 4px;
+    margin-right: 2px;
+}

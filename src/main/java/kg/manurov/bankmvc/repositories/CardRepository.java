@@ -18,7 +18,7 @@ public interface CardRepository extends JpaRepository<Card, Long> , JpaSpecifica
 
     Optional<Card> findByCardNumber(String cardNumber);
     boolean existsByCardNumber(String cardNumber);
-    Page<Card> findByOwnerId(Long ownerId, Pageable pageable);
+    List<Card> findByOwnerId(Long ownerId);
 
     @Query("SELECT c FROM Card c WHERE c.owner.id = :ownerId AND c.status = 'ACTIVE'")
     List<Card> findActiveCardsByOwnerId(@Param("ownerId") Long ownerId);

@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.*;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -133,5 +134,13 @@ public class TransactionService {
         transaction.setStatus(status.toUpperCase());
         transactionRepository.save(transaction);
         return transactionMapper.toDto(transaction);
+    }
+
+    public int getMonthlyTransactionCount(Long id) {
+        YearMonth month = YearMonth.now();
+        Instant start = month.atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant end = month.atEndOfMonth().atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC);
+
+        return transactionRepository.countTransactionsByUserIdAndDateRange(id, start, end);
     }
 }

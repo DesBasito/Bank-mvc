@@ -1,5 +1,5 @@
-<#import "spring.ftl" as spring>
-<#macro layout>
+<#macro userLayout>
+<#import "/spring.ftl" as spring>
     <!DOCTYPE html>
     <html lang="en">
     <head>

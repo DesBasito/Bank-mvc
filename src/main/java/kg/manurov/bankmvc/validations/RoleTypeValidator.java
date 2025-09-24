@@ -15,7 +15,6 @@ public class RoleTypeValidator implements ConstraintValidator<ValidRoleType, Set
         for (Long id : value){
             if (RoleType.existsById(id)) {
                 context.buildConstraintViolationWithTemplate("Роль по указанному id не существует (1:USER, 2:Admin)")
-                        .addPropertyNode("roleIds")
                         .addConstraintViolation();
                 isValid = false;
             }

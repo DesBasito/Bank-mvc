@@ -1,7 +1,5 @@
 package kg.manurov.bankmvc.controllers.web;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.manurov.bankmvc.dto.users.SignUpRequest;
 import kg.manurov.bankmvc.service.UserService;
@@ -30,18 +28,18 @@ public class AuthController {
     @GetMapping("/register")
     public String create(Model model) {
         SignUpRequest signUpRequest = new SignUpRequest();
-        model.addAttribute("userCreationDto", signUpRequest);
+        model.addAttribute("signUpRequest", signUpRequest);
         return "auth/register";
     }
 
 
     @PostMapping("/register")
-    public String create(@Valid SignUpRequest userCreationDto, BindingResult bindingResult, Model model, HttpServletRequest request) {
+    public String create(@Valid SignUpRequest signUpRequest, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("userCreationDto", userCreationDto);
+            model.addAttribute("signUpRequest", signUpRequest);
             return "auth/register";
         }
-        userService.create(userCreationDto);
-        return "redirect:/login";
+        userService.create(signUpRequest);
+        return "redirect:/auth/login";
     }
 }

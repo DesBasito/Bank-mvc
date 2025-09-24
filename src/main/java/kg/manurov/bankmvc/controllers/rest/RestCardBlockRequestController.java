@@ -1,5 +1,6 @@
 package kg.manurov.bankmvc.controllers.rest;
 
+import kg.manurov.bankmvc.dto.ApiResponse;
 import kg.manurov.bankmvc.dto.cards.CardBlockRequestCreateDto;
 import kg.manurov.bankmvc.dto.cards.CardBlockRequestDto;
 import kg.manurov.bankmvc.service.CardBlockRequestService;
@@ -34,30 +35,31 @@ public class RestCardBlockRequestController {
     private final AuthenticatedUserUtil userUtil;
 
 
-    @Operation(summary = "Создать запрос на блокировку карты",
-            description = "Создание запроса на блокировку собственной карты пользователем")
+    @Operation(summary = "Create card block request",
+            description = "Creating a request to block own card by user")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Запрос на блокировку создан",
-                    content = @Content(schema = @Schema(implementation = CardBlockRequestDto.class))),
+                    description = "Block request created successfully",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
-                    description = "Некорректные данные или карта уже заблокирована"),
+                    description = "Invalid data or card is already blocked",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "403",
-                    description = "Нет доступа к данной карте")
+                    description = "No access to this card",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<CardBlockRequestDto> createBlockRequest(
+    public ResponseEntity<ApiResponse<CardBlockRequestDto>> createBlockRequest(
             @Valid @RequestBody CardBlockRequestCreateDto request) {
-
-        Long userId = userUtil.getCurrentUserId();
         String userName = userUtil.getCurrentUsername();
-        log.info("Пользователь {} создает запрос на блокировку карты с ID: {}", userName, request.getCardId());
-        CardBlockRequestDto blockRequest = cardBlockRequestService.createBlockRequest(userId, request);
+        log.info("User {} creates block request for card with ID: {}", userName, request.getCardId());
 
-        return ResponseEntity.ok(blockRequest);
+        CardBlockRequestDto blockRequest = cardBlockRequestService.createBlockRequest(request);
+
+        return ResponseEntity.ok(ApiResponse.success("Block request submitted successfully", blockRequest));
     }
 
     @Operation(summary = "Получить мои запросы на блокировку",

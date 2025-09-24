@@ -75,9 +75,11 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CardDto> getUserCards(Long userId, Pageable pageable) {
-        return cardRepository.findByOwnerId(userId, pageable)
-                .map(cardMapper::toDto);
+    public List<CardDto> getUserCards(Long userId) {
+        return cardRepository.findByOwnerId(userId)
+                .stream()
+                .map(cardMapper::toDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +97,7 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException(CARD_NOT_FOUND));
 
-        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.getDescription())) {
+        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
             throw new ValidationException("Карта уже заблокирована");
         }
 
@@ -111,9 +113,9 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException(CARD_NOT_FOUND));
 
-        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.getDescription())) {
+        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
             card.setStatus(CardStatus.ACTIVE.name());
-        } else if (Objects.equals(card.getStatus(), CardStatus.ACTIVE.getDescription())) {
+        } else if (Objects.equals(card.getStatus(), CardStatus.ACTIVE.name())) {
             card.setStatus(CardStatus.BLOCKED.name());
         } else {
             throw new ValidationException("Cannot change status of expired card!");
