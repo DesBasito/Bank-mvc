@@ -22,7 +22,7 @@ public class UserDto {
     String middleName;
     @NotNull
     String lastName;
-    Boolean isActive;
+    Boolean enabled;
     List<CardDto> cards;
 
     public String getFullName(){

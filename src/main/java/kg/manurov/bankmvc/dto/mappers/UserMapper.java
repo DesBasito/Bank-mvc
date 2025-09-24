@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -57,7 +56,7 @@ public class UserMapper {
         dto.setFirstName(user.getFirstName());
         dto.setMiddleName(user.getMiddleName());
         dto.setLastName(user.getLastName());
-        dto.setIsActive(user.getEnabled());
+        dto.setEnabled(user.getEnabled());
         return dto;
     }
 }

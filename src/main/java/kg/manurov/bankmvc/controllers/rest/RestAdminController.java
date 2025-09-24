@@ -24,15 +24,17 @@ public class RestAdminController {
     private final UserService userService;
 
 
-    @Operation(summary = "Заблокировать/разблокировать пользователя",
-            description = "Изменение статуса активности пользователя")
     @PostMapping("/{id}/toggle-status")
+    @Operation(summary = "Toggle user status", description = "Enable or disable user account")
     public ResponseEntity<String> toggleUserStatus(
-            @Parameter(description = "ID пользователя") @PathVariable Long id) {
+            @Parameter(description = "User ID") @PathVariable Long id) {
+            UserDto updatedUser = userService.toggleUserStatus(id);
+            String message = updatedUser.getEnabled()
+                    ? "User has been activated successfully"
+                    : "User has been blocked successfully";
 
-        UserDto user = userService.toggleUserStatus(id);
-        String message = user.getIsActive() ? "Пользователь активирован: " + user.getFullName() : "Пользователь " + user.getFullName() + " заблокирован";
-        return ResponseEntity.ok(message);
+            log.info("User status toggled - ID: {}, New Status: {}", id, updatedUser.getEnabled());
+            return ResponseEntity.ok(message);
     }
 
 
