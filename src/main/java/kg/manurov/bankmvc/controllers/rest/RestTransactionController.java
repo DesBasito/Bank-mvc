@@ -45,14 +45,14 @@ public class RestTransactionController {
                     description = "Карта не принадлежит пользователю")
     })
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionDto> transferBetweenMyCards(
+    public ResponseEntity<ApiResponse<Void>> transferBetweenMyCards(
             @Valid @RequestBody TransferRequest request) {
 
         String userName = userUtil.getCurrentUsername();
         log.info("Пользователь {} инициирует перевод с карты {} на карту {} на сумму {}",
                 userName, request.getFromCardId(), request.getToCardId(), request.getAmount());
-        TransactionDto transaction = transactionService.transferBetweenUserCards(request);
-        return ResponseEntity.ok(transaction);
+        Long id = transactionService.transferBetweenUserCards(request);
+        return ResponseEntity.ok(ApiResponse.success("Перевод выполнен успешно. ID транзакции: "+id));
     }
 
 

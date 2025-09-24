@@ -42,7 +42,7 @@ public class TransactionService {
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public TransactionDto transferBetweenUserCards(TransferRequest request) {
+    public Long transferBetweenUserCards(TransferRequest request) {
         Card fromCard = cardRepository.findById(request.getFromCardId())
                 .orElseThrow(() -> new NoSuchElementException("Карта отправителя не найдена"));
 
@@ -62,7 +62,7 @@ public class TransactionService {
             Transaction savedTransaction = transactionRepository.save(transaction);
 
             log.info("Перевод выполнен успешно. ID транзакции: {}", savedTransaction.getId());
-            return transactionMapper.toDto(savedTransaction);
+            return savedTransaction.getId();
 
         } catch (Exception e) {
             log.error("Ошибка при выполнении перевода: {}", e.getMessage(), e);
