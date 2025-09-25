@@ -45,8 +45,8 @@ public class TransactionController {
     @PreAuthorize("hasRole(ROLE_USER)")
     public String getTransferPage(Model model) {
         Long userId = userUtil.getCurrentUserId();
-        List<CardDto> cards = cardService.getUserCards(userId);
-        model.addAttribute("cards",cards);
+        List<CardDto> cards = cardService.getUserActiveCards(userId);
+        model.addAttribute("activeCards",cards);
         return "user/userTransferPage";
     }
 

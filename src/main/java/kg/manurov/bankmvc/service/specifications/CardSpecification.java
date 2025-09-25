@@ -18,10 +18,7 @@ public class CardSpecification {
 
             // Filter for the status (accurate coincidence)
             if (status != null) {
-                predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("status")),
-                        "%" + status.toUpperCase() + "%"
-                ));
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
             }
 
             if (balanceFrom != null && balanceTo == null) {

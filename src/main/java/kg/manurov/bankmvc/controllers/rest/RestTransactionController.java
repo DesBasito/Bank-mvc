@@ -24,35 +24,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/transactions")
 @SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
-@Tag(name = "Транзакции", description = "Операции с переводами между картами")
+@Tag(name = "Transactions", description = "Operations with transfers between cards")
 public class RestTransactionController {
 
     private final TransactionService transactionService;
     private final AuthenticatedUserUtil userUtil;
 
-    @Operation(summary = "Перевод между своими картами",
-            description = "Перевод средств между картами текущего пользователя")
+    @Operation(summary = "Transfer between own cards",
+            description = "Transfer funds between current user's cards")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Перевод успешно выполнен",
+                    description = "Transfer completed successfully",
                     content = @Content(schema = @Schema(implementation = TransactionDto.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
-                    description = "Некорректные данные для перевода"),
+                    description = "Invalid transfer data"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "403",
-                    description = "Карта не принадлежит пользователю")
+                    description = "Card does not belong to user")
     })
     @PostMapping("/transfer")
+    @PreAuthorize("hasRole(ROLE_USER)")
     public ResponseEntity<ApiResponse<Void>> transferBetweenMyCards(
             @Valid @RequestBody TransferRequest request) {
 
         String userName = userUtil.getCurrentUsername();
-        log.info("Пользователь {} инициирует перевод с карты {} на карту {} на сумму {}",
+        log.info("User {} initiates transfer from card {} to card {} for amount {}",
                 userName, request.getFromCardId(), request.getToCardId(), request.getAmount());
         Long id = transactionService.transferBetweenUserCards(request);
-        return ResponseEntity.ok(ApiResponse.success("Перевод выполнен успешно. ID транзакции: "+id));
+        return ResponseEntity.ok(ApiResponse.success("Transfer completed successfully. Transaction ID: " + id));
     }
 
 

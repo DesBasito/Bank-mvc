@@ -18,21 +18,21 @@ servers:
 security:
 - Basic Authentication: []
 tags:
+- name: "Transactions"
+  description: "Operations with transfers between cards"
 - name: "Cards"
   description: "Bank card management operations"
 - name: "Заявки на карты"
   description: "Управление заявками на создание карт"
 - name: "Запросы на блокировку карт"
   description: "Управление запросами на блокировку банковских карт"
-- name: "Транзакции"
-  description: "Операции с переводами между картами"
 - name: "Управление пользователями"
   description: "Административные операции с пользователями"
 paths:
   /api/v1/transactions/{id}/refund:
     put:
       tags:
-      - "Транзакции"
+      - "Transactions"
       summary: "Refund transaction by ID"
       operationId: "toggleTransaction"
       parameters:
@@ -116,9 +116,9 @@ paths:
   /api/v1/transactions/transfer:
     post:
       tags:
-      - "Транзакции"
-      summary: "Перевод между своими картами"
-      description: "Перевод средств между картами текущего пользователя"
+      - "Transactions"
+      summary: "Transfer between own cards"
+      description: "Transfer funds between current user's cards"
       operationId: "transferBetweenMyCards"
       requestBody:
         content:
@@ -127,24 +127,24 @@ paths:
               $ref: "#/components/schemas/TransferRequest"
         required: true
       responses:
-        "200":
-          description: "Перевод успешно выполнен"
+        "400":
+          description: "Invalid transfer data"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/TransactionDto"
-        "400":
-          description: "Некорректные данные для перевода"
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "200":
+          description: "Transfer completed successfully"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TransactionDto"
         "403":
-          description: "Карта не принадлежит пользователю"
+          description: "Card does not belong to user"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/TransactionDto"
+                $ref: "#/components/schemas/ApiResponseVoid"
       security:
       - Basic Authentication: []
   /api/v1/card-block-requests:
@@ -167,14 +167,14 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "403":
-          description: "No access to this card"
+        "400":
+          description: "Invalid data or card is already blocked"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "400":
-          description: "Invalid data or card is already blocked"
+        "403":
+          description: "No access to this card"
           content:
             '*/*':
               schema:
@@ -355,14 +355,14 @@ paths:
               $ref: "#/components/schemas/CardApplicationRequest"
         required: true
       responses:
-        "400":
-          description: "Bad request"
+        "200":
+          description: "Application created successfully"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "200":
-          description: "Application created successfully"
+        "400":
+          description: "Bad request"
           content:
             '*/*':
               schema:
@@ -983,9 +983,9 @@ components:
       properties:
         empty:
           type: "boolean"
-        unsorted:
-          type: "boolean"
         sorted:
+          type: "boolean"
+        unsorted:
           type: "boolean"
     PageCardApplicationDto:
       type: "object"

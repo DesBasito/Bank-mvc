@@ -123,7 +123,7 @@ public class CardApplicationService {
 
 
     @Transactional(readOnly = true)
-    public Page<CardApplicationDto> getApplicationsByStatus(String status, Pageable pageable) {
+    public Page<CardApplicationDto> getAllApplications(String status, Pageable pageable) {
         Specification<CardApplication> cardApplicationSpecification = CardApplicationSpecification.createSpecification(status);
         return cardApplicationRepository.findAll(cardApplicationSpecification, pageable)
                 .map(mapper::mapToDto);

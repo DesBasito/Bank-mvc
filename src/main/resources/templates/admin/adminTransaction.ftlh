@@ -457,7 +457,7 @@
         }
 
         function logout() {
-            window.location.href = '/auth/logout';
+            window.location.href = '/logout';
         }
 
         // Clear modal data when closed
