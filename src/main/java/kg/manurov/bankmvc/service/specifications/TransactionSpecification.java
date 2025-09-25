@@ -1,7 +1,6 @@
 package kg.manurov.bankmvc.service.specifications;
 
 import jakarta.persistence.criteria.Predicate;
-import kg.manurov.bankmvc.entities.CardApplication;
 import kg.manurov.bankmvc.entities.Transaction;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;

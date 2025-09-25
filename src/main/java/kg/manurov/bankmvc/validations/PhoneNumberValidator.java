@@ -18,12 +18,12 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
         context.disableDefaultConstraintViolation();
 
         if (!Pattern.compile("^\\+7\\([0-9]{3}\\)[0-9]{3}[0-9]{4}$").matcher(number).matches()) {
-            context.buildConstraintViolationWithTemplate("Номер телефона должен быть в формате '+7(XXX)XXXXXXX'!")
+            context.buildConstraintViolationWithTemplate("The phone number should be in the format '+7(XXX)XXXXXXX'!")
                     .addConstraintViolation();
             isValid = false;
         }
         if (userRepository.existsByPhoneNumber(number)){
-            context.buildConstraintViolationWithTemplate("Такой номер телефона уже существует!")
+            context.buildConstraintViolationWithTemplate("Such a phone number already exists!")
                     .addConstraintViolation();
             isValid = false;
         }

@@ -45,10 +45,6 @@ public class UserMapper {
                 .build();
     }
 
-    public UserDto toDtoWithoutCards(User user) {
-        return getUserDto(user);
-    }
-
     private UserDto getUserDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());

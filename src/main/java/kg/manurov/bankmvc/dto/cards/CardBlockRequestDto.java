@@ -12,36 +12,36 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на блокировку карты")
+@Schema(description = "Card block request")
 public class CardBlockRequestDto {
 
-    @Schema(description = "ID запроса")
+    @Schema(description = "Request ID")
     Long id;
 
-    @Schema(description = "ID карты")
+    @Schema(description = "Card ID")
     Long cardId;
 
-    @Schema(description = "Номер карты (маскированный)")
+    @Schema(description = "Card number (masked)")
     String cardNumber;
 
-    @Schema(description = "ID пользователя")
+    @Schema(description = "User ID")
     Long userId;
 
-    @Schema(description = "Имя пользователя")
+    @Schema(description = "User name")
     String userName;
 
-    @Schema(description = "Причина блокировки")
+    @Schema(description = "Block reason")
     String reason;
 
-    @Schema(description = "Статус запроса", allowableValues = {"PENDING", "APPROVED", "REJECTED"})
+    @Schema(description = "Request status", allowableValues = {"PENDING", "APPROVED", "REJECTED"})
     String status;
 
-    @Schema(description = "Комментарий администратора")
+    @Schema(description = "Admin comment")
     String adminComment;
 
-    @Schema(description = "Дата создания запроса")
-    Instant createdAt;
+    @Schema(description = "Request creation date")
+    String createdAt;
 
-    @Schema(description = "Дата обработки запроса")
-    Instant processedAt;
+    @Schema(description = "Request processing date")
+    String processedAt;
 }

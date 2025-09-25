@@ -4,38 +4,36 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Заявка на создание карты")
+@Schema(description = "Card application")
 public class CardApplicationDto {
 
-    @Schema(description = "ID заявки")
+    @Schema(description = "Application ID")
     Long id;
 
-    @Schema(description = "ID пользователя")
+    @Schema(description = "User ID")
     Long userId;
 
-    @Schema(description = "Имя пользователя")
+    @Schema(description = "Username")
     String userName;
 
-    @Schema(description = "Тип карты")
+    @Schema(description = "Card type")
     String cardType;
 
-    @Schema(description = "Комментарий к заявке")
+    @Schema(description = "Application comment")
     String comment;
 
-    @Schema(description = "Статус заявки", allowableValues = {"PENDING", "APPROVED", "REJECTED", "CANCELLED"})
+    @Schema(description = "Application status", allowableValues = {"PENDING", "APPROVED", "REJECTED", "CANCELLED"})
     String status;
 
-    @Schema(description = "Дата создания заявки")
-    Instant createdAt;
+    @Schema(description = "Creation date")
+    String createdAt;
 
-    @Schema(description = "Дата обработки заявки")
-    Instant processedAt;
+    @Schema(description = "Processing date")
+    String processedAt;
 }

@@ -44,10 +44,10 @@ public class TransactionService {
     @Transactional
     public Long transferBetweenUserCards(TransferRequest request) {
         Card fromCard = cardRepository.findById(request.getFromCardId())
-                .orElseThrow(() -> new NoSuchElementException("Карта отправителя не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Sender card not found"));
 
         Card toCard = cardRepository.findById(request.getToCardId())
-                .orElseThrow(() -> new NoSuchElementException("Карта получателя не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Recipient card not found"));
 
         try {
             Transaction transaction = transactionMapper.toEntity(fromCard, toCard, request);
@@ -57,31 +57,30 @@ public class TransactionService {
             }
             cardService.addBalance(request.getToCardId(), request.getAmount());
 
-            log.info("Перевод пользователя {} с карты {} на карту {} на сумму {}",
+            log.info("Transfer from user {} from card {} to card {} amount {}",
                     fromCard.getOwner().getFullName(), request.getFromCardId(), request.getToCardId(), request.getAmount());
             Transaction savedTransaction = transactionRepository.save(transaction);
 
-            log.info("Перевод выполнен успешно. ID транзакции: {}", savedTransaction.getId());
+            log.info("Transfer completed successfully. Transaction ID: {}", savedTransaction.getId());
             return savedTransaction.getId();
 
         } catch (Exception e) {
-            log.error("Ошибка при выполнении перевода: {}", e.getMessage(), e);
+            log.error("Error during transfer: {}", e.getMessage(), e);
             Transaction failedTransaction = transactionMapper
                     .toEntityWithError(toCard, fromCard, request, e.getMessage());
             transactionRepository.save(failedTransaction);
 
-            throw new RuntimeException("Ошибка при выполнении перевода: " + e.getMessage());
+            throw new RuntimeException("Error during transfer: " + e.getMessage());
         }
     }
-
 
     @Transactional(readOnly = true)
     public TransactionDto getTransactionById(Long transactionId) {
         Long userId = userUtil.getCurrentUserId();
-        log.info("Получение транзакции {} для пользователя {}", transactionId, userId);
+        log.info("Getting transaction {} for user {}", transactionId, userId);
 
         Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new NoSuchElementException("Транзакция не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Transaction not found"));
 
         boolean hasAccess = Objects.equals(transaction.getFromCard().getOwner().getId(), userId) ||
                             Objects.equals(transaction.getToCard().getOwner().getId(), userId);
@@ -93,14 +92,12 @@ public class TransactionService {
                     .anyMatch(auth -> "ROLE_ADMIN".equals(auth.getAuthority()));
         }
 
-
         if (!hasAccess || admin) {
-            throw new IllegalArgumentException("Нет доступа к данной транзакции");
+            throw new IllegalArgumentException("No access to this transaction");
         }
 
         return transactionMapper.toDto(transaction);
     }
-
 
     public Page<TransactionDto> getAllTransactions(Pageable pageable) {
         return transactionRepository.findAll(pageable).map(transactionMapper::toDto);

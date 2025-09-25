@@ -30,7 +30,7 @@ public class BlockRequestValidator implements ConstraintValidator<ValidBlockRequ
 
         List<CardBlockRequest> request = cardBlockRequestRepository.findByCardIdAndStatus(id, CardRequestStatus.PENDING.name());
 
-        if (userUtil.isCardOwner(id, userUtil.getCurrentUsername())) {
+        if (!userUtil.isCardOwner(id, userUtil.getCurrentUsername())) {
             context.buildConstraintViolationWithTemplate("Нет доступа к данной карте")
                     .addConstraintViolation();
             return false;

@@ -50,7 +50,7 @@ public class CardController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@authenticatedUserUtil.isCardOwner(#id, authentication.name) or hasRole('ADMIN')")
+    @PreAuthorize("@authenticatedUserUtil.isCardOwner(#id, authentication.name) or hasRole('ROLE_ADMIN')")
     public String getCard(
             @Parameter(description = "ID карты") @PathVariable Long id,
             Model model) {

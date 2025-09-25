@@ -9,6 +9,7 @@ import kg.manurov.bankmvc.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -38,8 +40,14 @@ public class UserService implements UserDetailsService {
         log.info("Получение списка всех пользователей, страница: {}, размер: {}",
                 pageable.getPageNumber(), pageable.getPageSize());
 
-        return repository.findAll(pageable)
-                .map(userMapper::toDto);
+        Page<User> page = repository.findAll(pageable);
+
+        List<UserDto> filtered = page.getContent().stream()
+                .filter(u -> "USER".equals(u.getRole().getName()))
+                .map(userMapper::toDto)
+                .toList();
+
+        return new PageImpl<>(filtered, pageable, filtered.size());
     }
 
     @Transactional(readOnly = true)

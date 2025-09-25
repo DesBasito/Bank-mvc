@@ -24,7 +24,6 @@ public class CardDecryptionAspect {
     @AfterReturning(
             pointcut = "execution(* kg.manurov.bankmvc.repositories.CardRepository.*(..)) || " +
                        "execution(* kg.manurov.bankmvc.repositories.CardBlockRequestRepository.*(..))",
-//                       "!execution(* com.example.bankcards.repositories.CardRepository.save*(..))",
             returning = "result")
     public void decryptCardData(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();

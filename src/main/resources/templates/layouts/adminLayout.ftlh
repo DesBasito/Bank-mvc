@@ -28,7 +28,6 @@
                 <a class="nav-link text-white <?active?>" href="/card-applications/admin/all"><i class="fas fa-file-alt me-2"></i>Applications</a>
                 <a class="nav-link text-white <?active?>" href="/transactions/all"><i class="fas fa-exchange-alt me-2"></i>Transactions</a>
                 <a class="nav-link text-white <?active?>" href="/users"><i class="fas fa-users me-2"></i>Users</a>
-                <a class="nav-link text-white <?active?>" href="/card-block-requests/admin/all"><i class="fas fa-chart-bar me-2"></i>Reports</a>
             </nav>
         </div>
 

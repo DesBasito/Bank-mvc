@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Basic Authentication")
-@PreAuthorize("hasRole('ADMIN')")
-@Tag(name = "Управление пользователями", description = "Административные операции с пользователями")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+@Tag(name = "User Management", description = "Administrative operations with users")
 public class RestAdminController {
     private final UserService userService;
 
@@ -28,30 +28,30 @@ public class RestAdminController {
     @Operation(summary = "Toggle user status", description = "Enable or disable user account")
     public ResponseEntity<String> toggleUserStatus(
             @Parameter(description = "User ID") @PathVariable Long id) {
-            UserDto updatedUser = userService.toggleUserStatus(id);
-            String message = updatedUser.getEnabled()
-                    ? "User has been activated successfully"
-                    : "User has been blocked successfully";
+        UserDto updatedUser = userService.toggleUserStatus(id);
+        String message = updatedUser.getEnabled()
+                ? "User has been activated successfully"
+                : "User has been blocked successfully";
 
-            log.info("User status toggled - ID: {}, New Status: {}", id, updatedUser.getEnabled());
-            return ResponseEntity.ok(message);
+        log.info("User status toggled - ID: {}, New Status: {}", id, updatedUser.getEnabled());
+        return ResponseEntity.ok(message);
     }
 
 
-    @Operation(summary = "Удалить пользователя",
-            description = "Удаление пользователя из системы")
+    @Operation(summary = "Delete user",
+            description = "Delete user from system")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Пользователь удален"),
+                    description = "User deleted"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
-                    description = "Нельзя удалить пользователя с активными картами")
+                    description = "Cannot delete user with active cards")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(
-            @Parameter(description = "ID пользователя") @PathVariable Long id) {
+            @Parameter(description = "User ID") @PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok("Пользователь удален");
+        return ResponseEntity.ok("User deleted");
     }
 }

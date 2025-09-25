@@ -4,15 +4,20 @@ import kg.manurov.bankmvc.dto.transactions.TransactionDto;
 import kg.manurov.bankmvc.dto.transactions.TransferRequest;
 import kg.manurov.bankmvc.entities.Card;
 import kg.manurov.bankmvc.entities.Transaction;
-import kg.manurov.bankmvc.enums.EnumInterface;
 import kg.manurov.bankmvc.enums.TransactionStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Component
 public class TransactionMapper {
     public TransactionDto toDto(Transaction transaction) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
         TransactionDto dto = new TransactionDto();
         dto.setId(transaction.getId());
         dto.setFromCardId(transaction.getFromCard().getId());
@@ -24,11 +29,15 @@ public class TransactionMapper {
         dto.setAmount(transaction.getAmount());
         dto.setDescription(transaction.getDescription());
         dto.setStatus(transaction.getStatus());
-        dto.setCreatedAt(transaction.getCreatedAt());
-        dto.setProcessedAt(transaction.getProcessedAt());
+        dto.setCreatedAt(formatInstant(transaction.getCreatedAt(),formatter));
+        dto.setProcessedAt(formatInstant(transaction.getProcessedAt(),formatter));
         dto.setErrorMessage(transaction.getErrorMessage());
 
         return dto;
+    }
+    private String formatInstant(Instant instant, DateTimeFormatter formatter) {
+        if (instant!=null) return instant.atZone(ZoneId.systemDefault()).format(formatter);
+        else return "";
     }
 
     public Transaction toEntity(Card toCard, Card fromCard, TransferRequest request) {

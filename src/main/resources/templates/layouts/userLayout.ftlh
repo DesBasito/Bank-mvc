@@ -33,7 +33,7 @@
                         <a class="nav-link " href="/profile"><i class="fas fa-user me-1"></i>Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#"><i class="fas fa-file-alt me-1"></i>Applications</a>
+                        <a class="nav-link " href="/card-applications/my"><i class="fas fa-file-alt me-1"></i>Applications</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link " href="/transactions/my"><i class="fas fa-history me-1"></i>Transactions</a>

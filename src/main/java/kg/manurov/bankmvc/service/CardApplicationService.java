@@ -45,7 +45,7 @@ public class CardApplicationService {
         return mapper.mapToDto(savedApplication);
     }
 
-    public CardDto approveCardApplication(Long applicationId) {
+    public void approveCardApplication(Long applicationId) {
         log.info("Одобрение заявки на карту с ID: {}", applicationId);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
@@ -63,11 +63,9 @@ public class CardApplicationService {
         cardApplicationRepository.save(application);
 
         log.info("Заявка одобрена, карта создана с ID: {}", savedCard.getId());
-
-        return savedCard;
     }
 
-    public CardApplicationDto rejectCardApplication(Long applicationId, String reason) {
+    public void rejectCardApplication(Long applicationId, String reason) {
         log.info("Отклонение заявки на карту с ID: {}, причина: {}", applicationId, reason);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
@@ -80,18 +78,18 @@ public class CardApplicationService {
         application.setStatus(CardRequestStatus.REJECTED.name());
         application.setProcessedAt(Instant.now());
         if (reason != null) {
-            application.setComment(application.getComment() + " | Причина отклонения: " + reason);
+            application.setComment(application.getComment() != null ?
+                    application.getComment()+" | "
+                    : "Причина отклонения: " + reason);
         }
 
-        CardApplication savedApplication = cardApplicationRepository.save(application);
+        cardApplicationRepository.save(application);
 
         log.info("Заявка отклонена");
-
-        return mapper.mapToDto(savedApplication);
     }
 
 
-    public CardApplicationDto cancelCardApplication(Long applicationId, Long userId) {
+    public void cancelCardApplication(Long applicationId, Long userId) {
         log.info("Отмена заявки на карту с ID: {} пользователем с ID: {}", applicationId, userId);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
@@ -106,10 +104,9 @@ public class CardApplicationService {
         application.setStatus(CardRequestStatus.CANCELLED.name());
         application.setProcessedAt(Instant.now());
 
-        CardApplication savedApplication = cardApplicationRepository.save(application);
+        cardApplicationRepository.save(application);
 
         log.info("Заявка отменена пользователем");
-        return mapper.mapToDto(savedApplication);
     }
 
 

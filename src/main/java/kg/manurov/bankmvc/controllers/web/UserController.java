@@ -1,7 +1,6 @@
 package kg.manurov.bankmvc.controllers.web;
 
 import kg.manurov.bankmvc.dto.cards.CardDto;
-import kg.manurov.bankmvc.entities.Card;
 import kg.manurov.bankmvc.enums.CardStatus;
 import kg.manurov.bankmvc.service.CardService;
 import kg.manurov.bankmvc.service.TransactionService;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -30,7 +28,7 @@ public class UserController {
     private final CardService cardService;
 
     @GetMapping()
-    @PreAuthorize("hasRole(ROLE_USER)")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public String profile(Model model) {
         Long id = userUtil.getCurrentUserId();
         List<CardDto> cards = cardService.getUserCards(id);
@@ -45,7 +43,7 @@ public class UserController {
 
         List<CardDto> activeCards = cards.stream()
                 .filter(card -> CardStatus.ACTIVE.name().equals(card.getStatus()))
-                .collect(Collectors.toList());
+                .toList();
         model.addAttribute("activeCards", activeCards);
 
          int monthlyTransactions = transactionService.getMonthlyTransactionCount(id);

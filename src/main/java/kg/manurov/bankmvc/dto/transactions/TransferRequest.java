@@ -16,24 +16,24 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на перевод между картами")
+@Schema(description = "Transfer request between cards")
 @ValidTransactionRequest
 public class TransferRequest {
 
-    @Schema(description = "ID карты отправителя", example = "1")
-    @NotNull(message = "ID карты отправителя обязателен")
+    @Schema(description = "Sender card ID", example = "1")
+    @NotNull(message = "Sender card ID is required")
     Long fromCardId;
 
-    @Schema(description = "ID карты получателя", example = "2")
-    @NotNull(message = "ID карты получателя обязателен")
+    @Schema(description = "Recipient card ID", example = "2")
+    @NotNull(message = "Recipient card ID is required")
     Long toCardId;
 
-    @Schema(description = "Сумма перевода", example = "1500.50")
-    @NotNull(message = "Сумма перевода обязательна")
-    @DecimalMin(value = "0.01", message = "Сумма перевода должна быть больше 0")
+    @Schema(description = "Transfer amount", example = "1500.50")
+    @NotNull(message = "Transfer amount is required")
+    @DecimalMin(value = "0.01", message = "Transfer amount must be greater than 0")
     BigDecimal amount;
 
-    @Schema(description = "Описание перевода", example = "Перевод на другую карту")
-    @Size(max = 500, message = "Описание не может превышать 500 символов")
+    @Schema(description = "Transfer description", example = "Transfer to another card")
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     String description;
 }

@@ -1,10 +1,5 @@
 package kg.manurov.bankmvc.controllers.rest;
 
-import kg.manurov.bankmvc.dto.ApiResponse;
-import kg.manurov.bankmvc.dto.transactions.TransactionDto;
-import kg.manurov.bankmvc.dto.transactions.TransferRequest;
-import kg.manurov.bankmvc.service.TransactionService;
-import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kg.manurov.bankmvc.dto.ApiResponse;
+import kg.manurov.bankmvc.dto.transactions.TransactionDto;
+import kg.manurov.bankmvc.dto.transactions.TransferRequest;
+import kg.manurov.bankmvc.service.TransactionService;
+import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,7 @@ public class RestTransactionController {
                     description = "Card does not belong to user")
     })
     @PostMapping("/transfer")
-    @PreAuthorize("hasRole(ROLE_USER)")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse<Void>> transferBetweenMyCards(
             @Valid @RequestBody TransferRequest request) {
 

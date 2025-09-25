@@ -1,6 +1,5 @@
 package kg.manurov.bankmvc.aspects;
 
-import kg.manurov.bankmvc.dto.cards.CardBlockRequestDto;
 import kg.manurov.bankmvc.dto.cards.CardDto;
 import kg.manurov.bankmvc.dto.transactions.TransactionDto;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;

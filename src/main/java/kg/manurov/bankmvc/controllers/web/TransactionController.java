@@ -32,7 +32,7 @@ public class TransactionController {
     private final AuthenticatedUserUtil userUtil;
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAllTransactions(
             @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable, Model model) {
@@ -42,7 +42,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transfer")
-    @PreAuthorize("hasRole(ROLE_USER)")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public String getTransferPage(Model model) {
         Long userId = userUtil.getCurrentUserId();
         List<CardDto> cards = cardService.getUserActiveCards(userId);
@@ -51,7 +51,7 @@ public class TransactionController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole(ROLE_USER)")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public String getMyTransactions(
             @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable, Model model,

@@ -1,4 +1,3 @@
-// CarSpecification.java
 package kg.manurov.bankmvc.service.specifications;
 
 import jakarta.persistence.criteria.Predicate;
@@ -15,14 +14,9 @@ public class CardApplicationSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Filter for the status (accurate coincidence)
-            if (status != null && !status.trim().isEmpty()) {
-                predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("status")),
-                        "%" + status.toUpperCase() + "%"
-                ));
+            if (status != null && !status.isBlank()) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
             }
-
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 

@@ -81,7 +81,7 @@
                             <option value="">All Cards</option>
                             <#if userCards??>
                                 <#list userCards as card>
-                                    <option value="${card.id}" ${(selectedCardId?? && selectedCardId == card.id)?string('selected', '')}>
+                                    <option value="${card.id}" ${(cardId?? && cardId == card.id)?string('selected', '')}>
                                         ${card.cardNumber} - $${card.balance}
                                     </option>
                                 </#list>

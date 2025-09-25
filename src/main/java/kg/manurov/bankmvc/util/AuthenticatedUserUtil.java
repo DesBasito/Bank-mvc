@@ -53,6 +53,6 @@ public class AuthenticatedUserUtil {
         if (auth != null && auth.getPrincipal() instanceof User user) {
             return user;
         }
-        throw new AccessDeniedException("У вас нету доступа");
+        throw new AccessDeniedException("U have no access!");
     }
 }

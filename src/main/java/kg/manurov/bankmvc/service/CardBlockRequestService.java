@@ -8,7 +8,6 @@ import kg.manurov.bankmvc.entities.CardBlockRequest;
 import kg.manurov.bankmvc.enums.CardRequestStatus;
 import kg.manurov.bankmvc.repositories.CardBlockRequestRepository;
 import kg.manurov.bankmvc.repositories.CardRepository;
-import kg.manurov.bankmvc.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

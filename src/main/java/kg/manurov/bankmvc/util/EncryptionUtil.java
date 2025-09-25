@@ -31,7 +31,7 @@ public class EncryptionUtil {
 
     public String encryptCardNumber(String cardNumber) {
         try {
-            log.debug("Начинаем шифрование номера карты");
+            log.debug("Starting card number encryption");
 
             SecretKey secretKey = generateKey();
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -48,18 +48,18 @@ public class EncryptionUtil {
             System.arraycopy(encryptedBytes, 0, encryptedWithIv, IV_LENGTH, encryptedBytes.length);
 
             String result = Base64.getEncoder().encodeToString(encryptedWithIv);
-            log.debug("Номер карты успешно зашифрован, длина результата: {}", result.length());
+            log.debug("Card number successfully encrypted, result length: {}", result.length());
 
             return result;
         } catch (Exception e) {
-            log.error("Ошибка при шифровании номера карты: {}", e.getMessage(), e);
-            throw new RuntimeException("Ошибка при шифровании номера карты", e);
+            log.error("Error encrypting card number: {}", e.getMessage(), e);
+            throw new RuntimeException("Error encrypting card number", e);
         }
     }
 
     public String decryptCardNumber(String encryptedCardNumber) {
         try {
-            log.debug("Начинаем расшифровку номера карты");
+            log.debug("Starting card number decryption");
 
             SecretKey secretKey = generateKey();
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -67,7 +67,7 @@ public class EncryptionUtil {
             byte[] encryptedWithIv = Base64.getDecoder().decode(encryptedCardNumber);
 
             if (encryptedWithIv.length < IV_LENGTH) {
-                throw new IllegalArgumentException("Недостаточная длина зашифрованных данных");
+                throw new IllegalArgumentException("Insufficient length of encrypted data");
             }
 
             byte[] iv = Arrays.copyOfRange(encryptedWithIv, 0, IV_LENGTH);
@@ -79,12 +79,12 @@ public class EncryptionUtil {
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
 
             String result = new String(decryptedBytes, StandardCharsets.UTF_8);
-            log.debug("Номер карты успешно расшифрован");
+            log.debug("Card number successfully decrypted");
 
             return result;
         } catch (Exception e) {
-            log.error("Ошибка при расшифровке номера карты: {}", e.getMessage(), e);
-            throw new RuntimeException("Ошибка при расшифровке номера карты", e);
+            log.error("Error decrypting card number: {}", e.getMessage(), e);
+            throw new RuntimeException("Error decrypting card number", e);
         }
     }
 
@@ -106,43 +106,37 @@ public class EncryptionUtil {
         SecureRandom random = new SecureRandom();
         String cardNumber;
         int attempts = 0;
-        final int maxAttempts = 100; // Предотвращаем бесконечный цикл
+        final int maxAttempts = 100;
 
         do {
             if (attempts++ > maxAttempts) {
-                throw new RuntimeException("Не удалось сгенерировать уникальный номер карты за " + maxAttempts + " попыток");
+                throw new RuntimeException("Failed to generate unique card number in " + maxAttempts + " attempts");
             }
-
             StringBuilder cardNumberBuilder = new StringBuilder();
             cardNumberBuilder.append("4000");
-
             for (int i = 0; i < 8; i++) {
                 cardNumberBuilder.append(random.nextInt(10));
             }
-
             for (int i = 0; i < 3; i++) {
                 cardNumberBuilder.append(random.nextInt(10));
             }
-
             int checkDigit = calculateLuhnCheckDigit(cardNumberBuilder.toString());
             cardNumberBuilder.append(checkDigit);
 
             cardNumber = cardNumberBuilder.toString();
 
             if (!isValidCardNumber(cardNumber)) {
-                log.debug("Сгенерированный номер карты невалидный, повторяем генерацию");
+                log.debug("Generated card number is invalid, retrying generation");
                 continue;
             }
 
             String encryptedCardNumber = encryptCardNumber(cardNumber);
 
             if (!cardRepository.existsByCardNumber(encryptedCardNumber)) {
-                log.debug("Сгенерирован уникальный номер карты за {} попыток", attempts);
+                log.debug("Generated unique card number in {} attempts", attempts);
                 break;
             }
-
-            log.debug("Сгенерированный номер карты уже существует, повторяем генерацию");
-
+            log.debug("Generated card number already exists, retrying generation");
         } while (true);
 
         return cardNumber;
@@ -152,22 +146,18 @@ public class EncryptionUtil {
         if (cardNumber == null || cardNumber.length() < 13 || cardNumber.length() > 19) {
             return false;
         }
-
         String cleanNumber = cardNumber.replaceAll("\\s", "");
-
         if (!cleanNumber.matches("\\d+")) {
             return false;
         }
-
         return isLuhnValid(cleanNumber);
     }
 
     private SecretKey generateKey() {
         try {
             if (encryptionKey == null || encryptionKey.trim().isEmpty()) {
-                throw new IllegalStateException("Ключ шифрования не настроен");
+                throw new IllegalStateException("Encryption key is not configured");
             }
-
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] keyBytes = digest.digest(encryptionKey.getBytes(StandardCharsets.UTF_8));
             byte[] key = new byte[16];
@@ -175,40 +165,34 @@ public class EncryptionUtil {
 
             return new SecretKeySpec(key, ALGORITHM);
         } catch (Exception e) {
-            log.error("Ошибка при генерации ключа шифрования: {}", e.getMessage(), e);
-            throw new RuntimeException("Ошибка при генерации ключа", e);
+            log.error("Error generating encryption key: {}", e.getMessage(), e);
+            throw new RuntimeException("Error generating key", e);
         }
     }
 
     private int calculateLuhnCheckDigit(String number) {
         int sum = 0;
         boolean alternate = true;
-
         sum = getSum(number, sum, alternate);
-
         return (10 - (sum % 10)) % 10;
     }
 
     private boolean isLuhnValid(String number) {
         int sum = 0;
         boolean alternate = false;
-
         sum = getSum(number, sum, alternate);
-
         return (sum % 10) == 0;
     }
 
     private int getSum(String number, int sum, boolean alternate) {
         for (int i = number.length() - 1; i >= 0; i--) {
             int digit = Character.getNumericValue(number.charAt(i));
-
             if (alternate) {
                 digit *= 2;
                 if (digit > 9) {
                     digit = (digit % 10) + 1;
                 }
             }
-
             sum += digit;
             alternate = !alternate;
         }

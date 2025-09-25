@@ -1,11 +1,5 @@
 package kg.manurov.bankmvc.controllers.rest;
 
-import kg.manurov.bankmvc.dto.ApiResponse;
-import kg.manurov.bankmvc.dto.cardApplication.CardApplicationDto;
-import kg.manurov.bankmvc.dto.cardApplication.CardApplicationRequest;
-import kg.manurov.bankmvc.dto.cards.CardDto;
-import kg.manurov.bankmvc.service.CardApplicationService;
-import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,13 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kg.manurov.bankmvc.dto.ApiResponse;
+import kg.manurov.bankmvc.dto.cardApplication.CardApplicationDto;
+import kg.manurov.bankmvc.dto.cardApplication.CardApplicationRequest;
+import kg.manurov.bankmvc.dto.cards.CardDto;
+import kg.manurov.bankmvc.service.CardApplicationService;
+import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/card-applications")
 @SecurityRequirement(name = "Basic Authentication")
 @RequiredArgsConstructor
-@Tag(name = "Заявки на карты", description = "Управление заявками на создание карт")
+@Tag(name = "Card Applications", description = "Card application management")
 public class RestCardApplicationController {
     private final CardApplicationService cardApplicationService;
     private final AuthenticatedUserUtil userUtil;
@@ -48,7 +43,7 @@ public class RestCardApplicationController {
                     description = "Bad request",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     public ResponseEntity<ApiResponse<CardApplicationDto>> createApplication(
             @Valid @RequestBody CardApplicationRequest request) {
@@ -62,68 +57,56 @@ public class RestCardApplicationController {
         return ResponseEntity.ok(ApiResponse.success("Card application submitted successfully", result));
     }
 
-//    @Operation(summary = "Получить мои заявки",
-//            description = "Получение списка заявок текущего пользователя")
-//    @GetMapping("/my")
-//    @PreAuthorize("hasRole('USER')")
-//    public ResponseEntity<Page<CardApplicationDto>> getMyApplications(
-//            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
-//            Pageable pageable) {
-//
-//        Long userId = userUtil.getCurrentUserId();
-//        Page<CardApplicationDto> applications = cardApplicationService.getUserApplications(userId, pageable);
-//        return ResponseEntity.ok(applications);
-//    }
 
-    @Operation(summary = "Отменить заявку",
-            description = "Отмена заявки пользователем (только в статусе PENDING)")
-    @PostMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CardApplicationDto> cancelApplication(
-            @Parameter(description = "ID заявки") @PathVariable Long id) {
+    @Operation(summary = "Cancel application",
+            description = "Cancel application by user (only in PENDING status)")
+    @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<ApiResponse<Void>> cancelApplication(
+            @Parameter(description = "Application ID") @PathVariable Long id) {
 
         Long userId = userUtil.getCurrentUserId();
         String userName = userUtil.getCurrentUsername();
 
-        log.info("Пользователь {} отменяет заявку с ID: {}", userName, id);
-        CardApplicationDto application = cardApplicationService.cancelCardApplication(id, userId);
-        return ResponseEntity.ok(application);
+        log.info("User {} cancels application with ID: {}", userName, id);
+        cardApplicationService.cancelCardApplication(id, userId);
+        return ResponseEntity.ok(ApiResponse.success("Successfully cancelled card application!"));
     }
 
     // ======================================================================================================
 
-    @Operation(summary = "Одобрить заявку (админ)",
-            description = "Одобрение заявки и создание карты")
+    @Operation(summary = "Approve application (admin)",
+            description = "Approve application and create card")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Заявка одобрена, карта создана",
+                    description = "Application approved, card created",
                     content = @Content(schema = @Schema(implementation = CardDto.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
-                    description = "Заявка уже обработана")
+                    description = "Application already processed")
     })
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CardDto> approveApplication(
-            @Parameter(description = "ID заявки") @PathVariable Long id) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> approveApplication(
+            @Parameter(description = "Application ID") @PathVariable Long id) {
 
-        log.info("Администратор одобряет заявку с ID: {}", id);
-        CardDto card = cardApplicationService.approveCardApplication(id);
-        return ResponseEntity.ok(card);
+        log.info("Administrator approves application with ID: {}", id);
+        cardApplicationService.approveCardApplication(id);
+        return ResponseEntity.ok(ApiResponse.success("Application approved successfully!"));
     }
 
-    @Operation(summary = "Отклонить заявку (админ)",
-            description = "Отклонение заявки администратором")
+    @Operation(summary = "Reject application (admin)",
+            description = "Reject application by administrator")
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CardApplicationDto> rejectApplication(
-            @Parameter(description = "ID заявки") @PathVariable Long id,
-            @Parameter(description = "Причина отклонения")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> rejectApplication(
+            @Parameter(description = "Application ID") @PathVariable Long id,
+            @Parameter(description = "Rejection reason")
             @RequestParam(required = false) String reason) {
 
-        log.info("Администратор отклоняет заявку с ID: {}, причина: {}", id, reason);
-        CardApplicationDto application = cardApplicationService.rejectCardApplication(id, reason);
-        return ResponseEntity.ok(application);
+        log.info("Administrator rejects application with ID: {}, reason: {}", id, reason);
+        cardApplicationService.rejectCardApplication(id, reason);
+        return ResponseEntity.ok(ApiResponse.success("Application rejected."));
     }
 }

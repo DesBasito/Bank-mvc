@@ -1,8 +1,8 @@
 package kg.manurov.bankmvc.dto.cardApplication;
 
-import kg.manurov.bankmvc.validations.ValidCardType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import kg.manurov.bankmvc.validations.ValidCardType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,14 +12,14 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на создание карты")
+@Schema(description = "Card creation request")
 public class CardApplicationRequest {
 
-    @Schema(description = "Тип карты", example = "DEBIT", allowableValues = {"DEBIT", "CREDIT", "VIRTUAL", "PREPAID"})
-    @NotBlank(message = "Тип карты обязателен")
+    @Schema(description = "Card type", example = "DEBIT", allowableValues = {"DEBIT", "CREDIT", "VIRTUAL", "PREPAID"})
+    @NotBlank(message = "Card type is required")
     @ValidCardType
     String cardType;
 
-    @Schema(description = "Комментарий к заявке", example = "Основная карта для зарплаты")
+    @Schema(description = "Application comment", example = "Main salary card")
     String comment;
 }

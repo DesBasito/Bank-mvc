@@ -17,7 +17,7 @@ public class CardSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             // Filter for the status (accurate coincidence)
-            if (status != null) {
+            if (status != null && !status.isBlank()) {
                 predicates.add(criteriaBuilder.equal(root.get("status"), status));
             }
 

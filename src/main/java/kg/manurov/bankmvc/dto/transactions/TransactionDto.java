@@ -14,41 +14,41 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Информация о транзакции")
+@Schema(description = "Transaction information")
 public class TransactionDto {
-    @Schema(description = "ID транзакции")
+    @Schema(description = "Transaction ID")
     Long id;
 
-    @Schema(description = "ID карты отправителя")
+    @Schema(description = "Sender card ID")
     Long fromCardId;
 
-    @Schema(description = "Маскированный номер карты отправителя")
+    @Schema(description = "Masked sender card number")
     String fromCardNumber;
 
-    @Schema(description = "ID карты получателя")
+    @Schema(description = "Recipient card ID")
     Long toCardId;
 
-    @Schema(description = "Маскированный номер карты получателя")
+    @Schema(description = "Masked recipient card number")
     String toCardNumber;
 
     @NotNull
-    @Schema(description = "Сумма транзакции")
+    @Schema(description = "Transaction amount")
     BigDecimal amount;
 
-    @Schema(description = "Описание транзакции")
+    @Schema(description = "Transaction description")
     String description;
 
     @NotNull
-    @Schema(description = "Статус транзакции", allowableValues = {"SUCCESS", "CANCELLED", "REFUNDED"})
+    @Schema(description = "Transaction status", allowableValues = {"SUCCESS", "CANCELLED", "REFUNDED"})
     String status;
 
     @NotNull
-    @Schema(description = "Дата создания транзакции")
-    Instant createdAt;
+    @Schema(description = "Transaction creation date")
+    String createdAt;
 
-    @Schema(description = "Дата обработки транзакции")
-    Instant processedAt;
+    @Schema(description = "Transaction processing date")
+    String processedAt;
 
-    @Schema(description = "Сообщение об ошибке (если есть)")
+    @Schema(description = "Error message (if any)")
     String errorMessage;
 }

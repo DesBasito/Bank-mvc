@@ -11,10 +11,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * Custom authentication success handler that redirects users
- * to different pages based on their role after successful login
- */
 @Slf4j
 public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 

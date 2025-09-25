@@ -1,16 +1,10 @@
 package kg.manurov.bankmvc.controllers.web;
 
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.manurov.bankmvc.dto.cards.CardDto;
 import kg.manurov.bankmvc.dto.users.UserDto;
 import kg.manurov.bankmvc.enums.CardStatus;
-import kg.manurov.bankmvc.service.CardService;
 import kg.manurov.bankmvc.service.TransactionService;
 import kg.manurov.bankmvc.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +21,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
     private final UserService userService;
     private final TransactionService transactionService;
@@ -50,6 +44,7 @@ public class AdminController {
         return "admin/adminUsersList";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public String getUser(
             @Parameter(description = "ID пользователя") @PathVariable Long id, Model model) {
@@ -57,15 +52,22 @@ public class AdminController {
         model.addAttribute("user", user);
         model.addAttribute("cards", user.getCards());
 
-        BigDecimal totalBalance = user.getCards().stream()
-                .map(CardDto::getBalance)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        model.addAttribute("totalBalance", totalBalance);
 
-        List<CardDto> activeCards = user.getCards().stream()
-                .filter(card -> CardStatus.ACTIVE.name().equals(card.getStatus()))
-                .collect(Collectors.toList());
+        List<CardDto> activeCards = new ArrayList<>();
+        BigDecimal totalBalance = new BigDecimal(0);
+
+        if (user.getCards() != null && !user.getCards().isEmpty()) {
+            totalBalance = user.getCards().stream()
+                    .map(CardDto::getBalance)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            activeCards = user.getCards().stream()
+                    .filter(card -> CardStatus.ACTIVE.name().equals(card.getStatus()))
+                    .toList();
+        }
+
+        model.addAttribute("totalBalance", totalBalance);
         model.addAttribute("activeCards", activeCards);
 
         int monthlyTransactions = transactionService.getMonthlyTransactionCount(id);
