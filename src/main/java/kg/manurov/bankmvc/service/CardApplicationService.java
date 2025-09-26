@@ -33,82 +33,81 @@ public class CardApplicationService {
 
 
     public CardApplicationDto createCardApplication(Long userId, CardApplicationRequest request) {
-        log.info("Создание заявки на карту для пользователя с ID: {}", userId);
+        log.info("Creating card application for user with ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь не найден"));
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
         CardApplication application = mapper.toEntity(user, request);
         CardApplication savedApplication = cardApplicationRepository.save(application);
 
-        log.info("Заявка на карту создана с ID: {}", savedApplication.getId());
+        log.info("Card application created with ID: {}", savedApplication.getId());
 
         return mapper.mapToDto(savedApplication);
     }
 
     public void approveCardApplication(Long applicationId) {
-        log.info("Одобрение заявки на карту с ID: {}", applicationId);
+        log.info("Approving card application with ID: {}", applicationId);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Заявка не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Application not found"));
 
         if (!CardRequestStatus.PENDING.name().equals(application.getStatus())) {
-            throw new IllegalArgumentException("Заявка уже обработана");
+            throw new IllegalArgumentException("Application has already been processed");
         }
 
         CardDto savedCard = cardService.createCard(application.getUser().getId(), application.getCardType());
 
-       
+
         application.setStatus(CardRequestStatus.APPROVED.name());
         application.setProcessedAt(Instant.now());
         cardApplicationRepository.save(application);
 
-        log.info("Заявка одобрена, карта создана с ID: {}", savedCard.getId());
+        log.info("Application approved, card created with ID: {}", savedCard.getId());
     }
 
     public void rejectCardApplication(Long applicationId, String reason) {
-        log.info("Отклонение заявки на карту с ID: {}, причина: {}", applicationId, reason);
+        log.info("Rejecting card application with ID: {}, reason: {}", applicationId, reason);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Заявка не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Application not found"));
 
         if (!CardRequestStatus.PENDING.name().equals(application.getStatus())) {
-            throw new IllegalArgumentException("Заявка уже обработана");
+            throw new IllegalArgumentException("Application has already been processed");
         }
 
         application.setStatus(CardRequestStatus.REJECTED.name());
         application.setProcessedAt(Instant.now());
         if (reason != null) {
             application.setComment(application.getComment() != null ?
-                    application.getComment()+" | "
-                    : "Причина отклонения: " + reason);
+                    application.getComment() + " | "
+                    : "Rejection reason: " + reason);
         }
 
         cardApplicationRepository.save(application);
 
-        log.info("Заявка отклонена");
+        log.info("Application rejected");
     }
 
 
     public void cancelCardApplication(Long applicationId, Long userId) {
-        log.info("Отмена заявки на карту с ID: {} пользователем с ID: {}", applicationId, userId);
+        log.info("Canceling card application with ID: {} by user with ID: {}", applicationId, userId);
 
         CardApplication application = cardApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Заявка не найдена"));
+                .orElseThrow(() -> new NoSuchElementException("Application not found"));
 
         if (!application.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Нет доступа к этой заявке");
+            throw new IllegalArgumentException("No access to this application");
         }
         if (!CardRequestStatus.PENDING.name().equals(application.getStatus())) {
-            throw new IllegalArgumentException("Можно отменить только заявки в статусе 'Ожидание'");
+            throw new IllegalArgumentException("Only applications with 'Pending' status can be cancelled");
         }
         application.setStatus(CardRequestStatus.CANCELLED.name());
         application.setProcessedAt(Instant.now());
 
         cardApplicationRepository.save(application);
 
-        log.info("Заявка отменена пользователем");
+        log.info("Application cancelled by user");
     }
-
 
 
     @Transactional(readOnly = true)

@@ -53,8 +53,6 @@ databaseChangeLog:
               - column:
                   name: middle_name
                   type: varchar(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: last_name
                   type: varchar(100)

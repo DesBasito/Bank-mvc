@@ -48,11 +48,10 @@ public class CardService {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NoSuchElementException("User with phone number " + ownerId + " not found"));
         String plainCardNumber = encryptionUtil.generateCardNumber();
-        String encryptedCardNumber = encryptionUtil.encryptCardNumber(plainCardNumber);
 
         log.debug("Creating card with encrypted number for user: {}", owner.getFullName());
 
-        Card card = cardMapper.createEntity(owner, encryptedCardNumber, cardType);
+        Card card = cardMapper.createEntity(owner, plainCardNumber, cardType);
         Card savedCard = cardRepository.save(card);
 
         log.info("Card created with ID: {}", savedCard.getId());
@@ -66,13 +65,6 @@ public class CardService {
         return cardMapper.toDto(card);
     }
 
-    @Transactional(readOnly = true)
-    public CardDto getCardByNumber(String cardNumber) {
-        String encryptedNumber = encryptionUtil.encryptCardNumber(cardNumber);
-        Card card = cardRepository.findByCardNumber(encryptedNumber)
-                .orElseThrow(() -> new NoSuchElementException("Card with specified number not found"));
-        return cardMapper.toDto(card);
-    }
 
     @Transactional(readOnly = true)
     public List<CardDto> getUserCards(Long userId) {
@@ -165,20 +157,6 @@ public class CardService {
         }
 
         log.info("Updated {} expired cards", expiredCards.size());
-    }
-
-    public void deleteCard(Long cardId) {
-        log.info("Deleting card with ID: {}", cardId);
-
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new NoSuchElementException("Card not found"));
-
-        if (card.getBalance().compareTo(BigDecimal.ZERO) > 0) {
-            throw new ValidationException("Cannot delete card with positive balance");
-        }
-
-        cardRepository.delete(card);
-        log.info("Card {} deleted", card);
     }
 
 

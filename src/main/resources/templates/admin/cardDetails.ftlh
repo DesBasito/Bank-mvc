@@ -105,7 +105,7 @@
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <a class="btn btn-outline-primary btn-sm" href="/admin/users/${card.ownerId}">
+                                <a class="btn btn-outline-primary btn-sm" href="/users/${card.ownerId}">
                                     <i class="fas fa-eye me-1"></i>View User Details
                                 </a>
                             </div>

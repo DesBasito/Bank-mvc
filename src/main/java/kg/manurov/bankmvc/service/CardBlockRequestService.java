@@ -29,28 +29,28 @@ public class CardBlockRequestService {
     private final CardService cardService;
 
     public CardBlockRequestDto createBlockRequest(CardBlockRequestCreateDto request) {
-        log.info("Создание запроса на блокировку карты с ID: {}",
+        log.info("Creating block request for card with ID: {}",
                 request.getCardId());
 
         Card card = cardRepository.findById(request.getCardId())
-                .orElseThrow(() -> new NoSuchElementException("Пользователь не найден"));
-        CardBlockRequest blockRequest = mapper.toEntity(card,request);
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        CardBlockRequest blockRequest = mapper.toEntity(card, request);
         CardBlockRequest savedRequest = cardBlockRequestRepository.save(blockRequest);
 
-        log.info("Запрос на блокировку карты создан с ID: {}", savedRequest.getId());
+        log.info("Card block request created with ID: {}", savedRequest.getId());
         return mapper.mapToDto(savedRequest);
     }
 
 
     public CardBlockRequestDto approveBlockRequest(Long requestId, String adminComment) {
-        log.info("Одобрение запроса на блокировку с ID: {} администратором.",
+        log.info("Approving block request with ID: {} by admin",
                 requestId);
 
         CardBlockRequest blockRequest = cardBlockRequestRepository.findById(requestId)
-                .orElseThrow(() -> new NoSuchElementException("Запрос на блокировку не найден"));
+                .orElseThrow(() -> new NoSuchElementException("Block request not found"));
 
         if (!CardRequestStatus.PENDING.name().equals(blockRequest.getStatus())) {
-            throw new IllegalArgumentException("Запрос уже обработан");
+            throw new IllegalArgumentException("Request already processed");
         }
         cardService.blockCard(blockRequest.getCard().getId(), blockRequest.getReason());
 
@@ -59,44 +59,43 @@ public class CardBlockRequestService {
         blockRequest.setAdminComment(adminComment);
         cardBlockRequestRepository.save(blockRequest);
 
-        log.info("Запрос на блокировку одобрен, карта заблокирована");
+        log.info("Block request approved, card blocked");
 
         return mapper.mapToDto(blockRequest);
     }
 
 
-    public CardBlockRequestDto rejectBlockRequest(Long requestId, String adminComment) {
-        log.info("Отклонение запроса на блокировку с ID: {} администратором.",
+    public void rejectBlockRequest(Long requestId, String adminComment) {
+        log.info("Rejecting block request with ID: {} by admin",
                 requestId);
 
         CardBlockRequest blockRequest = cardBlockRequestRepository.findById(requestId)
-                .orElseThrow(() -> new NoSuchElementException("Запрос на блокировку не найден"));
+                .orElseThrow(() -> new NoSuchElementException("Block request not found"));
 
         if (!CardRequestStatus.PENDING.name().equals(blockRequest.getStatus())) {
-            throw new IllegalArgumentException("Запрос уже обработан");
+            throw new IllegalArgumentException("Request already processed");
         }
 
         blockRequest.setStatus(CardRequestStatus.REJECTED.name());
         blockRequest.setAdminComment(adminComment);
-        CardBlockRequest savedRequest = cardBlockRequestRepository.save(blockRequest);
+        cardBlockRequestRepository.save(blockRequest);
 
-        log.info("Запрос на блокировку отклонен");
-        return mapper.mapToDto(savedRequest);
+        log.info("Block request rejected");
     }
 
 
     public void cancelBlockRequest(Long requestId) {
-        log.info("Отмена запроса на блокировку с ID: {} автором.", requestId);
+        log.info("Cancelling block request with ID: {} by author", requestId);
 
         CardBlockRequest blockRequest = cardBlockRequestRepository.findById(requestId)
-                .orElseThrow(() -> new NoSuchElementException("Запрос на блокировку не найден"));
+                .orElseThrow(() -> new NoSuchElementException("Block request not found"));
 
         if (!CardRequestStatus.PENDING.name().equals(blockRequest.getStatus())) {
-            throw new IllegalArgumentException("Можно отменить только запросы в статусе 'Ожидание'");
+            throw new IllegalArgumentException("Can only cancel requests with 'Pending' status");
         }
         blockRequest.setStatus(CardRequestStatus.CANCELLED.name());
         cardBlockRequestRepository.save(blockRequest);
-        log.info("Запрос на блокировку отменен пользователем");
+        log.info("Block request cancelled by user");
     }
 
 
@@ -106,24 +105,10 @@ public class CardBlockRequestService {
                 .map(mapper::mapToDto);
     }
 
-
-    @Transactional(readOnly = true)
-    public Page<CardBlockRequestDto> getBlockRequestsByStatus(String status, Pageable pageable) {
-        return cardBlockRequestRepository.findByStatus(status, pageable)
-                .map(mapper::mapToDto);
-    }
-
-
     @Transactional(readOnly = true)
     public Page<CardBlockRequestDto> getUserBlockRequests(Long userId, Pageable pageable) {
         return cardBlockRequestRepository.findByUserId(userId, pageable)
                 .map(mapper::mapToDto);
     }
 
-
-    public CardBlockRequestDto getBlockRequestById(Long id) {
-        return cardBlockRequestRepository.findById(id)
-                .map(mapper::mapToDto)
-                .orElseThrow(()-> new NoSuchElementException("Запрос на блокировку не найден"));
-    }
 }

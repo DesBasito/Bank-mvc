@@ -103,7 +103,7 @@ public class TransactionService {
         return transactionRepository.findAll(pageable).map(transactionMapper::toDto);
     }
 
-    public TransactionDto refundTransaction(Long id) {
+    public void refundTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(NoSuchElementException::new);
         if (!transaction.getStatus().equals(TransactionStatus.SUCCESS.name())) {
             throw new IllegalArgumentException("The transaction is already processed!");
@@ -113,7 +113,6 @@ public class TransactionService {
         cardService.deductBalance(transaction.getToCard().getId(), transaction.getAmount());
         transaction.setStatus(TransactionStatus.REFUNDED.name());
         transactionRepository.save(transaction);
-        return transactionMapper.toDto(transaction);
     }
 
     public int getMonthlyTransactionCount(Long id) {

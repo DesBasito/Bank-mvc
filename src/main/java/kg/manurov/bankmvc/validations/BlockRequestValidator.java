@@ -26,34 +26,33 @@ public class BlockRequestValidator implements ConstraintValidator<ValidBlockRequ
         context.disableDefaultConstraintViolation();
 
         Card card = cardRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Карта не найдена!"));
+                .orElseThrow(() -> new NoSuchElementException("Card not found!"));
 
         List<CardBlockRequest> request = cardBlockRequestRepository.findByCardIdAndStatus(id, CardRequestStatus.PENDING.name());
 
-        if (!userUtil.isCardOwner(id, userUtil.getCurrentUsername())) {
-            context.buildConstraintViolationWithTemplate("Нет доступа к данной карте")
+        if (!userUtil.isCardOwner(userUtil.getCurrentUserId(), userUtil.getCurrentUsername())) {
+            context.buildConstraintViolationWithTemplate("No access to this card")
                     .addConstraintViolation();
             return false;
         }
 
         if (Objects.equals(card.getStatus(), CardStatus.BLOCKED.name())) {
-            context.buildConstraintViolationWithTemplate("Карта уже заблокирована")
+            context.buildConstraintViolationWithTemplate("Card is already blocked")
                     .addConstraintViolation();
             return false;
         }
 
         if (Objects.equals(card.getStatus(), CardStatus.EXPIRED.name())) {
-            context.buildConstraintViolationWithTemplate("Нельзя заблокировать истекшую карту")
+            context.buildConstraintViolationWithTemplate("Cannot block expired card")
                     .addConstraintViolation();
             return false;
         }
 
         if (!request.isEmpty()) {
-            context.buildConstraintViolationWithTemplate("На данную карту уже существует активный запрос на блокировку")
+            context.buildConstraintViolationWithTemplate("An active block request already exists for this card")
                     .addConstraintViolation();
             return false;
         }
-
 
         return true;
     }

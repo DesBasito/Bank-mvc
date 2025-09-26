@@ -151,18 +151,18 @@ paths:
               $ref: "#/components/schemas/TransferRequest"
         required: true
       responses:
-        "200":
-          description: "Transfer completed successfully"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/TransactionDto"
         "400":
           description: "Invalid transfer data"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponseVoid"
+        "200":
+          description: "Transfer completed successfully"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
         "403":
           description: "Card does not belong to user"
           content:
@@ -185,14 +185,14 @@ paths:
               $ref: "#/components/schemas/CardBlockRequestCreateDto"
         required: true
       responses:
-        "400":
-          description: "Invalid data or card is already blocked"
+        "403":
+          description: "No access to this card"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "403":
-          description: "No access to this card"
+        "400":
+          description: "Invalid data or card is already blocked"
           content:
             '*/*':
               schema:
@@ -424,45 +424,45 @@ components:
       properties:
         id:
           type: "integer"
-          description: "ID транзакции"
+          description: "Transaction ID"
           format: "int64"
         fromCardId:
           type: "integer"
-          description: "ID карты отправителя"
+          description: "Sender card ID"
           format: "int64"
         fromCardNumber:
           type: "string"
-          description: "Маскированный номер карты отправителя"
+          description: "Masked sender card number"
         toCardId:
           type: "integer"
-          description: "ID карты получателя"
+          description: "Recipient card ID"
           format: "int64"
         toCardNumber:
           type: "string"
-          description: "Маскированный номер карты получателя"
+          description: "Masked recipient card number"
         amount:
           type: "number"
-          description: "Сумма транзакции"
+          description: "Transaction amount"
         description:
           type: "string"
-          description: "Описание транзакции"
+          description: "Transaction description"
         status:
           type: "string"
-          description: "Статус транзакции"
+          description: "Transaction status"
           enum:
           - "SUCCESS"
           - "CANCELLED"
           - "REFUNDED"
         createdAt:
           type: "string"
-          description: "Дата создания транзакции"
+          description: "Transaction creation date"
         processedAt:
           type: "string"
-          description: "Дата обработки транзакции"
+          description: "Transaction processing date"
         errorMessage:
           type: "string"
-          description: "Сообщение об ошибке (если есть)"
-      description: "Информация о транзакции"
+          description: "Error message (if any)"
+      description: "Transaction information"
     ApiResponseVoid:
       type: "object"
       properties:
@@ -481,27 +481,27 @@ components:
       properties:
         fromCardId:
           type: "integer"
-          description: "ID карты отправителя"
+          description: "Sender card ID"
           format: "int64"
           example: 1
         toCardId:
           type: "integer"
-          description: "ID карты получателя"
+          description: "Recipient card ID"
           format: "int64"
           example: 2
         amount:
           minimum: 0.01
           exclusiveMinimum: false
           type: "number"
-          description: "Сумма перевода"
+          description: "Transfer amount"
           example: 1500.5
         description:
           maxLength: 500
           minLength: 0
           type: "string"
-          description: "Описание перевода"
-          example: "Перевод на другую карту"
-      description: "Запрос на перевод между картами"
+          description: "Transfer description"
+          example: "Transfer to another card"
+      description: "Transfer request between cards"
     CardBlockRequestCreateDto:
       required:
       - "cardId"
@@ -540,42 +540,42 @@ components:
       properties:
         id:
           type: "integer"
-          description: "ID запроса"
+          description: "Request ID"
           format: "int64"
         cardId:
           type: "integer"
-          description: "ID карты"
+          description: "Card ID"
           format: "int64"
         cardNumber:
           type: "string"
-          description: "Номер карты (маскированный)"
+          description: "Card number (masked)"
         userId:
           type: "integer"
-          description: "ID пользователя"
+          description: "User ID"
           format: "int64"
         userName:
           type: "string"
-          description: "Имя пользователя"
+          description: "User name"
         reason:
           type: "string"
-          description: "Причина блокировки"
+          description: "Block reason"
         status:
           type: "string"
-          description: "Статус запроса"
+          description: "Request status"
           enum:
           - "PENDING"
           - "APPROVED"
           - "REJECTED"
         adminComment:
           type: "string"
-          description: "Комментарий администратора"
+          description: "Admin comment"
         createdAt:
           type: "string"
-          description: "Дата создания запроса"
+          description: "Request creation date"
         processedAt:
           type: "string"
-          description: "Дата обработки запроса"
-      description: "Запрос на блокировку карты"
+          description: "Request processing date"
+      description: "Card block request"
     CardApplicationRequest:
       required:
       - "cardType"
@@ -583,7 +583,7 @@ components:
       properties:
         cardType:
           type: "string"
-          description: "Тип карты"
+          description: "Card type"
           example: "DEBIT"
           enum:
           - "DEBIT"
@@ -592,9 +592,9 @@ components:
           - "PREPAID"
         comment:
           type: "string"
-          description: "Комментарий к заявке"
-          example: "Основная карта для зарплаты"
-      description: "Запрос на создание карты"
+          description: "Application comment"
+          example: "Main salary card"
+      description: "Card creation request"
     CardDto:
       required:
       - "balance"
