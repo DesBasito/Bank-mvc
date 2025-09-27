@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @Column(name = "first_name", nullable = false, length = 100)
     String firstName;
 
-    @Column(name = "middle_name", nullable = false, length = 100)
+    @Column(name = "middle_name",  length = 100)
     String middleName;
 
     @Column(name = "last_name", nullable = false, length = 100)
@@ -74,7 +74,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == null) {
-            throw new AccessDeniedException("У пользователя отсутствует роль в системе!");
+            throw new AccessDeniedException("The user does not have a role in the system!");
         }
 
         return List.of(new SimpleGrantedAuthority("ROLE_"+role.getName()));

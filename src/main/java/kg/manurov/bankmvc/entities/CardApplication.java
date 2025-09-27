@@ -43,12 +43,12 @@ public class CardApplication {
     Instant processedAt;
 
     @ColumnDefault("'PENDING'")
-    @Column(name = "status", columnDefinition = "card_application_status not null")
+    @Column(name = "status")
     String status;
 
     @Column(name = "type")
     String cardType;
 
-    @Column(name = "comment", columnDefinition = "card_type not null")
+    @Column(name = "comment")
     String comment;
 }

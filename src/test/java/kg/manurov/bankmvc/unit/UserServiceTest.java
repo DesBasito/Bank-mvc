@@ -1,12 +1,12 @@
-package kg.manurov.bankmvc.service;
+package kg.manurov.bankmvc.unit;
 
 import kg.manurov.bankmvc.dto.mappers.UserMapper;
 import kg.manurov.bankmvc.dto.users.SignUpRequest;
 import kg.manurov.bankmvc.dto.users.UserDto;
 import kg.manurov.bankmvc.entities.Role;
 import kg.manurov.bankmvc.entities.User;
-import kg.manurov.bankmvc.repositories.CardRepository;
 import kg.manurov.bankmvc.repositories.UserRepository;
+import kg.manurov.bankmvc.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,6 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private CardRepository cardRepository;
 
     @Mock
     private UserMapper userMapper;

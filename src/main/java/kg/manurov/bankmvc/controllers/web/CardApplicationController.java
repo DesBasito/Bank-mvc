@@ -1,6 +1,5 @@
 package kg.manurov.bankmvc.controllers.web;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import kg.manurov.bankmvc.dto.cardApplication.CardApplicationDto;
 import kg.manurov.bankmvc.dto.cards.CardBlockRequestDto;
 import kg.manurov.bankmvc.service.CardApplicationService;

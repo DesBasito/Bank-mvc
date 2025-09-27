@@ -1,5 +1,5 @@
 
-package kg.manurov.bankmvc.service;
+package kg.manurov.bankmvc.unit;
 
 import kg.manurov.bankmvc.dto.cardApplication.CardApplicationDto;
 import kg.manurov.bankmvc.dto.cardApplication.CardApplicationRequest;
@@ -10,7 +10,8 @@ import kg.manurov.bankmvc.entities.User;
 import kg.manurov.bankmvc.enums.CardRequestStatus;
 import kg.manurov.bankmvc.repositories.CardApplicationRepository;
 import kg.manurov.bankmvc.repositories.UserRepository;
-import kg.manurov.bankmvc.service.specifications.CardApplicationSpecification;
+import kg.manurov.bankmvc.service.CardApplicationService;
+import kg.manurov.bankmvc.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

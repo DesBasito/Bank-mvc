@@ -73,7 +73,6 @@ public class RestCardApplicationController {
         return ResponseEntity.ok(ApiResponse.success("Successfully cancelled card application!"));
     }
 
-    // ======================================================================================================
 
     @Operation(summary = "Approve application (admin)",
             description = "Approve application and create card")

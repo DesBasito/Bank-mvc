@@ -38,7 +38,7 @@ public class SwagConfig {
                         REST API for bank card management with features:
                         
                         - User authentication and authorization
-                        - Card management (creation, viewing, blocking)
+                        - Card management (creation, viewing, blocking...)
                         - Transfers between cards
                         - System administration
                         

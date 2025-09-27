@@ -22,7 +22,6 @@ import java.util.Objects;
 @RequestMapping("/profile")
 @RequiredArgsConstructor
 public class UserController {
-    private final CardService service;
     private final AuthenticatedUserUtil userUtil;
     private final TransactionService transactionService;
     private final CardService cardService;

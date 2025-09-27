@@ -70,7 +70,6 @@ public class RestCardBlockRequestController {
         return ResponseEntity.ok().body(ApiResponse.success("block request cancelled"));
     }
 
-    // ================================================================
     @Operation(summary = "Approve block request (admin)",
             description = "Approve block request and block the card")
     @ApiResponses(value = {
