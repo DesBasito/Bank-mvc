@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+//https://www.baeldung.com/database-auditing-jpa
 public class UserAuditorAwareImpl implements AuditorAware<User> {
     private final AuthenticatedUserUtil userUtil;
 

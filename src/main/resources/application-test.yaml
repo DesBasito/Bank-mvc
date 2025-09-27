@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:h2:mem:test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    url: jdbc:h2:mem:test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;INIT=CREATE SCHEMA IF NOT EXISTS public
     driver-class-name: org.h2.Driver
     username: sa
     password: password
@@ -14,7 +14,13 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
-        globally_quoted_identifiers: true
+        globally_quoted_identifiers: false
+        hbm2ddl:
+          create_namespaces: true
+        jdbc:
+          time_zone: UTC
+        format_sql: false
+        use_sql_comments: false
   liquibase:
     enabled: false
   h2:
@@ -26,22 +32,25 @@ server:
   servlet:
     context-path: /api/v1
 
-ENCRYPTION_KEY: "test-encryption-key-32-characters!"
+ENCRYPTION_KEY: "PLUG"
 SERVER_PORT: 8080
 SERVER_CONTEXT_PATH: /api/v1
 APP_EXPIRY_DATE: 3
 
 app:
   encryption:
-    key: "test-encryption-key-32-characters!"
+    key: "PLUG"
   expiry_date: 3
   rest_path: /api/v1
   page_size: 10
 
 logging:
   level:
-    root: WARN
-    kg.manurov.bankmvc: INFO
-    org.hibernate.SQL: WARN
-    org.springframework.test: WARN
-    org.springframework.web: WARN
+    root: ERROR
+    kg.manurov.bankmvc: WARN
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
+    org.springframework.test: ERROR
+    org.springframework.web: ERROR
+    org.springframework.orm.jpa: ERROR
+    org.springframework.transaction: ERROR
