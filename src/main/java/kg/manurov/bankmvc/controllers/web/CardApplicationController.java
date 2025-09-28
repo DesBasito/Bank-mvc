@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,6 @@ public class CardApplicationController {
     private final AuthenticatedUserUtil userUtil;
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('USER')")
     public String getMyApplications(
             @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable, Model model) {
@@ -42,7 +40,6 @@ public class CardApplicationController {
     }
 
     @GetMapping("/admin/all")
-    @PreAuthorize("hasRole('ADMIN')")
     public String getAllApplications(
             @RequestParam(required = false) String status,
             @PageableDefault(size = 2, sort = "createdAt", direction = Sort.Direction.DESC)

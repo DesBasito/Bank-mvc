@@ -20,6 +20,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @Slf4j
 //https://github.com/adishjain/AES_EncryptionDecryption/blob/master/EncDec.java
+//ChatGPT
 public class EncryptionUtil {
 
     private final CardRepository cardRepository;

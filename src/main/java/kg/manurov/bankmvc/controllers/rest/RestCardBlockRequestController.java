@@ -82,7 +82,6 @@ public class RestCardBlockRequestController {
                     description = "Request already processed")
     })
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CardBlockRequestDto> approveBlockRequest(
             @Parameter(description = "Block request ID") @PathVariable Long id,
             @Parameter(description = "Administrator comment")
@@ -96,7 +95,6 @@ public class RestCardBlockRequestController {
     @Operation(summary = "Reject block request (admin)",
             description = "Reject block request by administrator")
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> rejectBlockRequest(
             @Parameter(description = "Block request ID") @PathVariable Long id,
             @Parameter(description = "Administrator comment (rejection reason)")

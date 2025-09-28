@@ -1,5 +1,12 @@
 server:
   port: ${SERVER_PORT}
+  error:
+    whitelabel:
+      enabled: false
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
 
 spring:
   application:
@@ -29,6 +36,9 @@ spring:
   liquibase:
     change-log: classpath:db/migrations/master.yaml
     enabled: true
+  web:
+    resources:
+      add-mappings: true
 
 app:
   encryption:

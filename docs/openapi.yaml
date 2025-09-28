@@ -44,24 +44,42 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Transaction not found!"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Access denied for this transaction!"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "Transaction rolled back successfully!"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TransactionDto"
-        "404":
-          description: "Transaction not found!"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
-        "403":
-          description: "Access denied for this transaction!"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
       security:
       - Basic Authentication: []
   /api/v1/cards/{id}/toggle:
@@ -80,6 +98,36 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -105,6 +153,36 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -129,6 +207,36 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -151,18 +259,36 @@ paths:
               $ref: "#/components/schemas/TransferRequest"
         required: true
       responses:
-        "400":
-          description: "Invalid transfer data"
+        "404":
+          description: "Not Found"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
+                type: "string"
         "403":
           description: "Card does not belong to user"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Invalid transfer data"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "Transfer completed successfully"
           content:
@@ -185,18 +311,36 @@ paths:
               $ref: "#/components/schemas/CardBlockRequestCreateDto"
         required: true
       responses:
-        "400":
-          description: "Invalid data or card is already blocked"
+        "404":
+          description: "Not Found"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ApiResponse"
+                type: "string"
         "403":
           description: "No access to this card"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Invalid data or card is already blocked"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "Block request created successfully"
           content:
@@ -227,6 +371,36 @@ paths:
         schema:
           type: "string"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -251,6 +425,36 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -281,14 +485,38 @@ paths:
         schema:
           type: "string"
       responses:
-        "200":
-          description: "Request approved, card blocked"
+        "404":
+          description: "Not Found"
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/CardBlockRequestDto"
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "400":
           description: "Request already processed"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "Request approved, card blocked"
           content:
             '*/*':
               schema:
@@ -309,12 +537,36 @@ paths:
               $ref: "#/components/schemas/CardApplicationRequest"
         required: true
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "400":
           description: "Bad request"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "Application created successfully"
           content:
@@ -345,6 +597,36 @@ paths:
         schema:
           type: "string"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -369,18 +651,42 @@ paths:
           type: "integer"
           format: "int64"
       responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Application already processed"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "Application approved, card created"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CardDto"
-        "400":
-          description: "Application already processed"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
       security:
       - Basic Authentication: []
   /api/v1/users/{id}:
@@ -399,14 +705,38 @@ paths:
           type: "integer"
           format: "int64"
       responses:
-        "200":
-          description: "User deleted"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
           content:
             '*/*':
               schema:
                 type: "string"
         "400":
           description: "Cannot delete user with active cards"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "User deleted"
           content:
             '*/*':
               schema:

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
+//https://attractor-school.com/courses/java/
 public class SwagConfig {
     @Value("${server.port:8080}")
     private String serverPort;

@@ -9,7 +9,6 @@ import kg.manurov.bankmvc.service.CardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +28,6 @@ public class RestCardController {
     @Operation(summary = "Change card status (admin)",
             description = "Change card status by administrator")
     @PutMapping("/{id}/toggle")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> toggleCard(
             @Parameter(description = "card ID") @PathVariable Long id) {
         log.info("Administrator changes card status with ID: {}", id);

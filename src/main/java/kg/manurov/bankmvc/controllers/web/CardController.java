@@ -30,7 +30,6 @@ public class CardController {
 
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAllCards(
             @RequestParam(required = false, name = "balanceFrom") String balanceFrom,
             @RequestParam(required = false, name = "balanceTo") String balanceTo,

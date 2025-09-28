@@ -1,15 +1,20 @@
 package kg.manurov.bankmvc.util;
 
 import kg.manurov.bankmvc.entities.User;
+import kg.manurov.bankmvc.repositories.CardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.NoSuchElementException;
+
 @Component
 @RequiredArgsConstructor
 public class AuthenticatedUserUtil {
+    private final CardRepository cardRepository;
+
     public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() &&
@@ -28,10 +33,13 @@ public class AuthenticatedUserUtil {
         return false;
     }
 
-    public boolean isCardOwner(Long cardOwnerId, String username) {
-        if (username == null || cardOwnerId == null) {
+    public boolean isCardOwner(Long cardId, String username) {
+        if (username == null || cardId == null) {
             return false;
         }
+        Long cardOwnerId = cardRepository.findById(cardId)
+                .orElseThrow(()->new NoSuchElementException("Card by id: "+cardId+" not found!"))
+                .getOwner().getId();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User user) {

@@ -16,7 +16,6 @@ import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -45,7 +44,6 @@ public class RestTransactionController {
                     description = "Card does not belong to user")
     })
     @PostMapping("/transfer")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse<Void>> transferBetweenMyCards(
             @Valid @RequestBody TransferRequest request) {
 
@@ -70,7 +68,6 @@ public class RestTransactionController {
                     responseCode = "403",
                     description = "Access denied for this transaction!")
     })
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/refund")
     public ResponseEntity<ApiResponse<Void>> toggleTransaction(
             @Parameter(description = "Transaction ID") @PathVariable Long id) {

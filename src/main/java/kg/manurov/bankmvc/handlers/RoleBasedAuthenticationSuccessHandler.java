@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.Collection;
 
 @Slf4j
+//https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/AuthenticationSuccessHandler.html
+//Epam
 public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final String USER_TARGET_URL = "/profile";
@@ -45,12 +47,10 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
 
             switch (role) {
                 case "ROLE_ADMIN":
-                case "ADMIN":
                     log.info("Redirecting admin user to: {}", ADMIN_TARGET_URL);
                     return ADMIN_TARGET_URL;
 
                 case "ROLE_USER":
-                case "USER":
                     log.info("Redirecting regular user to: {}", USER_TARGET_URL);
                     return USER_TARGET_URL;
 

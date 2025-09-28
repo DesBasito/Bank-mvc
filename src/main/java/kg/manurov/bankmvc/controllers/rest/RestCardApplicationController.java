@@ -17,7 +17,6 @@ import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -43,7 +42,6 @@ public class RestCardApplicationController {
                     description = "Bad request",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     public ResponseEntity<ApiResponse<CardApplicationDto>> createApplication(
             @Valid @RequestBody CardApplicationRequest request) {
@@ -61,7 +59,6 @@ public class RestCardApplicationController {
     @Operation(summary = "Cancel application",
             description = "Cancel application by user (only in PENDING status)")
     @PutMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse<Void>> cancelApplication(
             @Parameter(description = "Application ID") @PathVariable Long id) {
 
@@ -86,7 +83,6 @@ public class RestCardApplicationController {
                     description = "Application already processed")
     })
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> approveApplication(
             @Parameter(description = "Application ID") @PathVariable Long id) {
 
@@ -98,7 +94,6 @@ public class RestCardApplicationController {
     @Operation(summary = "Reject application (admin)",
             description = "Reject application by administrator")
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> rejectApplication(
             @Parameter(description = "Application ID") @PathVariable Long id,
             @Parameter(description = "Rejection reason")

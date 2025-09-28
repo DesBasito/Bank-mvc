@@ -7,7 +7,6 @@ import kg.manurov.bankmvc.service.TransactionService;
 import kg.manurov.bankmvc.util.AuthenticatedUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +26,6 @@ public class UserController {
     private final CardService cardService;
 
     @GetMapping()
-    @PreAuthorize("hasRole('ROLE_USER')")
     public String profile(Model model) {
         Long id = userUtil.getCurrentUserId();
         List<CardDto> cards = cardService.getUserCards(id);

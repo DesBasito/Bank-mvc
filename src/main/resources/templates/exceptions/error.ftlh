@@ -341,7 +341,7 @@
             <#if description??>
                 <p data-l10n>${description}</p>
             </#if>
-            <button id="backBtn">Вернуться назад</button>
+            <button id="backBtn">Return back</button>
 
             <#if details??>
                 <ul class="details">

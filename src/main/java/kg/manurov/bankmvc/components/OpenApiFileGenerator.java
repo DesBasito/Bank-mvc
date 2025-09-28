@@ -13,6 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Epam
+ * <p>
+ * https://www.baeldung.com/jackson-yaml
+ * <p>
+ * ChatGPT
+ */
 @Slf4j
 @Component
 public class OpenApiFileGenerator implements CommandLineRunner {

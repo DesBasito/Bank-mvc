@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
+//https://www.baeldung.com/spring-mvc-custom-validator
 public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
     private final UserRepository userRepository;
 

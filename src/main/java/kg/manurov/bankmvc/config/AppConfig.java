@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableScheduling
 @EnableJpaAuditing
+//https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/path-matching.html
 public class AppConfig implements WebMvcConfigurer {
     @Value("${app.rest_path}")
     private String restPath;
