@@ -46,7 +46,6 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // REST API endpoints with role-based access control
 
                         // Card Application endpoints
                         .requestMatchers(HttpMethod.POST, "/api/v1/card-applications").hasAuthority("ROLE_USER")
@@ -70,8 +69,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/*/toggle-status").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*").hasAuthority("ROLE_ADMIN")
 
-                        // Web MVC endpoints with role-based access control
-
                         // User web pages - only USER role
                         .requestMatchers("/card-applications/my").hasAuthority("ROLE_USER")
                         .requestMatchers("/transactions/transfer").hasAuthority("ROLE_USER")
@@ -89,6 +86,7 @@ public class SecurityConfig {
 
                         // Cards with custom authorization (owner or admin)
                         .requestMatchers("/cards/*").authenticated()
+                        .requestMatchers("/users/1").denyAll()
                         .anyRequest().authenticated());
         return http.build();
     }
