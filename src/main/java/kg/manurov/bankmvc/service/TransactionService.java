@@ -72,30 +72,6 @@ public class TransactionService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public TransactionDto getTransactionById(Long transactionId) {
-        Long userId = userUtil.getCurrentUserId();
-        log.info("Getting transaction {} for user {}", transactionId, userId);
-
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new NoSuchElementException("Transaction not found"));
-
-        boolean hasAccess = Objects.equals(transaction.getFromCard().getOwner().getId(), userId) ||
-                            Objects.equals(transaction.getToCard().getOwner().getId(), userId);
-
-        boolean admin = false;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getAuthorities() != null) {
-            admin = authentication.getAuthorities().stream()
-                    .anyMatch(auth -> "ROLE_ADMIN".equals(auth.getAuthority()));
-        }
-
-        if (!hasAccess || admin) {
-            throw new IllegalArgumentException("No access to this transaction");
-        }
-
-        return transactionMapper.toDto(transaction);
-    }
 
     public Page<TransactionDto> getAllTransactions(Pageable pageable) {
         return transactionRepository.findAll(pageable).map(transactionMapper::toDto);

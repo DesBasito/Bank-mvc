@@ -44,18 +44,18 @@ paths:
           type: "integer"
           format: "int64"
       responses:
-        "404":
-          description: "Transaction not found!"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
         "200":
           description: "Transaction rolled back successfully!"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TransactionDto"
+        "404":
+          description: "Transaction not found!"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
         "403":
           description: "Access denied for this transaction!"
           content:
@@ -151,12 +151,6 @@ paths:
               $ref: "#/components/schemas/TransferRequest"
         required: true
       responses:
-        "200":
-          description: "Transfer completed successfully"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/TransactionDto"
         "400":
           description: "Invalid transfer data"
           content:
@@ -169,6 +163,12 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponseVoid"
+        "200":
+          description: "Transfer completed successfully"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
       security:
       - Basic Authentication: []
   /api/v1/card-block-requests:
@@ -185,14 +185,14 @@ paths:
               $ref: "#/components/schemas/CardBlockRequestCreateDto"
         required: true
       responses:
-        "403":
-          description: "No access to this card"
+        "400":
+          description: "Invalid data or card is already blocked"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "400":
-          description: "Invalid data or card is already blocked"
+        "403":
+          description: "No access to this card"
           content:
             '*/*':
               schema:
@@ -309,14 +309,14 @@ paths:
               $ref: "#/components/schemas/CardApplicationRequest"
         required: true
       responses:
-        "200":
-          description: "Application created successfully"
+        "400":
+          description: "Bad request"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-        "400":
-          description: "Bad request"
+        "200":
+          description: "Application created successfully"
           content:
             '*/*':
               schema:
@@ -369,18 +369,18 @@ paths:
           type: "integer"
           format: "int64"
       responses:
-        "400":
-          description: "Application already processed"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ApiResponseVoid"
         "200":
           description: "Application approved, card created"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CardDto"
+        "400":
+          description: "Application already processed"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
       security:
       - Basic Authentication: []
   /api/v1/users/{id}:

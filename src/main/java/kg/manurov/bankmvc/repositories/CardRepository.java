@@ -13,8 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> , JpaSpecificationExecutor<Card> {
-
-    Optional<Card> findByCardNumber(String cardNumber);
     boolean existsByCardNumber(String cardNumber);
     List<Card> findByOwnerId(Long ownerId);
 

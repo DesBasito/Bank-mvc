@@ -38,7 +38,7 @@ public class CardDto {
     String status;
     String type;
     @NotNull
-    @PositiveOrZero(message = "Баланс не может быть меньше 0!")
+    @PositiveOrZero(message = "Balance cannot be less than 0!")
     @Schema()
     BigDecimal balance;
     @NotNull

@@ -31,13 +31,13 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User create(SignUpRequest request) {
         User user = userMapper.toEntity(request);
-        log.info("Создание нового пользователя: {}", user.getFullName());
+        log.info("Creating new user: {}", user.getFullName());
         return repository.save(user);
     }
 
     @Transactional(readOnly = true)
     public Page<UserDto> getAllUsers(Pageable pageable) {
-        log.info("Получение списка всех пользователей, страница: {}, размер: {}",
+        log.info("Getting all users, page: {}, size: {}",
                 pageable.getPageNumber(), pageable.getPageSize());
 
         Page<User> page = repository.findAll(pageable);
@@ -52,50 +52,49 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
-        log.info("Поиск пользователя по ID: {}", id);
+        log.info("Finding user by ID: {}", id);
 
         User user = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с ID " + id + " не найден"));
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + id + " not found"));
 
         return userMapper.toDto(user);
     }
 
     @Transactional
     public UserDto toggleUserStatus(Long id) {
-        log.info("Изменение статуса пользователя с ID: {}", id);
+        log.info("Toggling status for user with ID: {}", id);
 
         User user = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с ID " + id + " не найден"));
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + id + " not found"));
 
         user.setEnabled(!user.getEnabled());
 
         User updatedUser = repository.save(user);
-        log.info("Статус пользователя {} изменен на: {}",
-                updatedUser.getFullName(), updatedUser.getEnabled() ? "активен" : "заблокирован");
+        log.info("User {} status changed to: {}",
+                updatedUser.getFullName(), updatedUser.getEnabled() ? "active" : "blocked");
 
         return userMapper.toDto(updatedUser);
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        log.info("Удаление пользователя с ID: {}", id);
+        log.info("Deleting user with ID: {}", id);
 
         User user = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с ID " + id + " не найден"));
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + id + " not found"));
 
         boolean hasActiveCards = cardRepository.findActiveCardsByOwnerId(id).isEmpty();
         if (hasActiveCards) {
-            throw new IllegalArgumentException("Нельзя удалить пользователя с активными картами");
+            throw new IllegalArgumentException("Cannot delete user with active cards");
         }
 
         repository.delete(user);
-        log.info("Пользователь {} успешно удален", user.getFullName());
+        log.info("User {} successfully deleted", user.getFullName());
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
         return repository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

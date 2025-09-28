@@ -44,14 +44,12 @@ public class AdminController {
         return "admin/adminUsersList";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public String getUser(
-            @Parameter(description = "ID пользователя") @PathVariable Long id, Model model) {
+            @Parameter(description = "User ID") @PathVariable Long id, Model model) {
         UserDto user = userService.getUserById(id);
         model.addAttribute("user", user);
         model.addAttribute("cards", user.getCards());
-
 
         List<CardDto> activeCards = new ArrayList<>();
         BigDecimal totalBalance = new BigDecimal(0);

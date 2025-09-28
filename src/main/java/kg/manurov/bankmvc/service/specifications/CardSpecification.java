@@ -16,7 +16,6 @@ public class CardSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Filter for the status (accurate coincidence)
             if (status != null && !status.isBlank()) {
                 predicates.add(criteriaBuilder.equal(root.get("status"), status));
             }

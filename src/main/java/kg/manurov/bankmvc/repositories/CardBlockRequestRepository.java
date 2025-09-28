@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface CardBlockRequestRepository extends JpaRepository<CardBlockRequest, Long> {
     Page<CardBlockRequest> findByUserId(Long userId, Pageable pageable);
-    Page<CardBlockRequest> findByStatus(String status, Pageable pageable);
     List<CardBlockRequest> findByCardIdAndStatus(Long id, String name);
 }
